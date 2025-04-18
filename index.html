@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>APTURA - VR House Tour</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 </head>
+
 <body>
 
     <!-- Video Intro -->
@@ -15,36 +17,44 @@
             Your browser does not support the video tag.
         </video>
     </div>
-
-    <!-- Header -->
-    <header>
-        <img src="assets/APTURA.png" alt="APTURA Logo" class="logo">
-        <nav>
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Features</a></li>
-                <li><a href="#">Connectivity</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
     
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1 class="fade-in">Walk in Imagination</h1>
-            <p class="fade-in">Experience a new way of home exploration with APTURA VR tours.</p>
-            <a href="#" class="cta-button">Start Your Tour</a>
-        </div>
-        <!-- Background Video -->
-<video autoplay muted loop id="bgVideo">
-  <source src="assets/bg1.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+    <div class="container">
 
-    </section>
-    
+        <!--Header-->
+        <header>
+            <img data-aos="fade-down" data-aos-duration="1000" src="assets/APTURA.png" alt="APTURA Logo" class="logo">
+
+            <nav>
+                <a data-aos="fade-down" data-aos-duration="1000" href="#">Home</a>
+                <a data-aos="fade-down" data-aos-duration="1500" href="#">Features</a>
+                <a data-aos="fade-down" data-aos-duration="2000" href="#">Connections</a>
+                <a data-aos="fade-down" data-aos-duration="2500" href="#">About</a>
+                <a data-aos="fade-down" data-aos-duration="3000" href="#">Contact</a>
+            </nav>
+        
+            <button data-aos="fade-down" data-aos-duration="1500" class="btn-signing">Login</button>
+        </header>
+        
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1 class="fade-in">Walk in Imagination</h1>
+                <p class="fade-in">Experience a new way of home exploration with APTURA VR tours.</p>
+                <a href="#" class="cta-button">Start Your Tour</a>
+            </div>
+            <!-- Background Video -->
+            <video autoplay muted loop id="bgVideo">
+                <source src="assets/bg1.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+
+        </section>
+    </div>
+
     <script src="script.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+      AOS.init();
+    </script>
 </body>
 </html>
