@@ -1,99 +1,109 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Aptura | Customer Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
       background-color: #111;
       color: white;
+      transition: background 0.3s ease-in-out;
     }
     header {
       padding: 1rem;
-      background-color: #000;
+      background: #000;
       display: flex;
       justify-content: space-between;
       align-items: center;
       position: sticky;
       top: 0;
       z-index: 999;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.5);
     }
     header .logo {
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       font-weight: bold;
       letter-spacing: 2px;
     }
     header .actions button {
-      background-color: #222;
+      background: linear-gradient(135deg, #36d1dc, #5b86e5);
       border: none;
-      color: white;
-      padding: 0.5rem 1rem;
+      color:  #0e0e10;
+      padding: 0.6rem 1.2rem;
       margin-left: 0.5rem;
       cursor: pointer;
-      border-radius: 10px;
-      transition: background 0.3s ease;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: transform 0.2s ease;
     }
     header .actions button:hover {
-      background-color: #444;
+      transform: scale(1.05);
     }
     main {
       padding: 1rem;
     }
     .filters {
       margin-bottom: 1rem;
+      display: flex;
+      justify-content: center;
     }
     .filters select {
       padding: 0.5rem;
-      border-radius: 8px;
-      border: none;
-      background: #333;
+      border-radius: 10px;
+      background: #222;
       color: white;
+      border: 1px solid #555;
     }
     .card-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.2rem;
+      transition: all 0.3s ease-in-out;
     }
     .card {
-      background: #1c1c1c;
-      border-radius: 16px;
+      background: #1a1a1a;
+      border-radius: 18px;
       padding: 1rem;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+      transition: transform 0.3s ease;
     }
     .card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
     }
     .card model-viewer {
       width: 100%;
       height: 300px;
-      max-width: 100%;
-      filter: drop-shadow(0 0 0.5rem #444);
     }
     .card h3 {
       margin-top: 1rem;
     }
-    .card button {
-      background: #333;
-      border: none;
-      padding: 0.5rem 1rem;
-      color: white;
+    .view-selector select, .card button {
       margin-top: 0.5rem;
+      padding: 0.5rem;
+      border: none;
       border-radius: 10px;
-      transition: background 0.3s ease;
+      background: linear-gradient(135deg, #36d1dc, #5b86e5);
+      color:  #0e0e10;
+      font-weight: bold;
       cursor: pointer;
+      transition: transform 0.2s ease;
     }
-    .card button:hover {
-      background: #555;
+    .card button:hover, .view-selector select:hover {
+      transform: scale(1.05);
     }
     .modal {
       position: fixed;
@@ -111,9 +121,6 @@
     .modal.show {
       display: block;
     }
-    .modal h2 {
-      margin-bottom: 1rem;
-    }
     .modal input, .modal select {
       width: 100%;
       padding: 0.5rem;
@@ -121,19 +128,928 @@
       border-radius: 8px;
       border: none;
       background: #333;
-      color: white;
+      color:  rgb(14, 13, 13);
     }
     .modal button {
       width: 100%;
       padding: 0.5rem;
-      background: #444;
+      background: linear-gradient(135deg, #36d1dc, #5b86e5);
       border: none;
-      color: white;
+      color: #0e0e10;
       border-radius: 10px;
       margin-top: 0.5rem;
+      font-weight: bold;
     }
-    .view-selector {
+    @media (max-width: 600px) {
+      header .logo {
+        font-size: 1.2rem;
+      }
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .profile-section {
+      margin: 1.5rem 0;
+      padding: 1rem;
+      background: #2a2a2a;
+      border-radius: 12px;
+    }
+
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
       margin-top: 1rem;
+    }
+
+    .analytics-card {
+      background: #333;
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .analytics-number {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #36d1dc;
+      margin: 0.5rem 0;
+    }
+
+    .interaction-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .interaction-table th,
+    .interaction-table td {
+      padding: 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid #444;
+    }
+
+    .interaction-table th {
+      background: #333;
+      font-weight: bold;
+    }
+
+    #recentActivities li {
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #444;
+    }
+
+    .modal {
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    /* Enhanced Modal Styles */
+    .modal {
+      max-width: 900px;
+      background: #1a1a1a;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .search-section {
+      margin-bottom: 2rem;
+    }
+
+    .search-section input {
+      width: 100%;
+      padding: 1rem;
+      border: none;
+      border-radius: 12px;
+      background: #2a2a2a;
+      color: white;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .filter-tags {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+
+    .filter-tag {
+      padding: 0.5rem 1rem;
+      background: #2a2a2a;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .filter-tag.active {
+      background: linear-gradient(135deg, #36d1dc, #5b86e5);
+      color: #0e0e10;
+    }
+
+    .builders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .builder-card {
+      background: #2a2a2a;
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: transform 0.3s ease;
+    }
+
+    .builder-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .builder-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .builder-logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .builder-rating {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .rating-count {
+      font-size: 0.8rem;
+      color: #888;
+    }
+
+    .builder-info h3 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.2rem;
+    }
+
+    .builder-location {
+      color: #888;
+      margin-bottom: 1rem;
+    }
+
+    .builder-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      background: #333;
+      border-radius: 12px;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-value {
+      display: block;
+      font-weight: bold;
+      color: #36d1dc;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: #888;
+    }
+
+    .builder-specialties {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .specialty-tag {
+      font-size: 0.8rem;
+      padding: 0.3rem 0.8rem;
+      background: #333;
+      border-radius: 12px;
+      color: #36d1dc;
+    }
+
+    .view-profile-btn {
+      width: 100%;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #36d1dc, #5b86e5);
+      color: #0e0e10;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .view-profile-btn:hover {
+      transform: scale(1.02);
+    }
+
+    .close-modal-btn {
+      width: 100%;
+      padding: 1rem;
+      margin-top: 1rem;
+      border: none;
+      border-radius: 12px;
+      background: #333;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .close-modal-btn:hover {
+      background: #444;
+    }
+
+    @media (max-width: 768px) {
+      .builders-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .modal {
+        width: 95%;
+        padding: 1rem;
+      }
+    }
+
+    /* Profile Modal Specific Styles */
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid #333;
+    }
+
+    .profile-avatar img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 3px solid #36d1dc;
+    }
+
+    .profile-summary h3 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .profile-email, .profile-phone {
+      color: #888;
+      margin: 0.2rem 0;
+    }
+
+    .profile-badges {
+      margin-top: 0.5rem;
+    }
+
+    .badge {
+      background: linear-gradient(135deg, #36d1dc, #5b86e5);
+      color: #0e0e10;
+      padding: 0.3rem 0.8rem;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      margin-right: 0.5rem;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .info-item {
+      background: #2a2a2a;
+      padding: 1rem;
+      border-radius: 12px;
+    }
+
+    .info-label {
+      display: block;
+      color: #888;
+      font-size: 0.9rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .info-value {
+      font-weight: bold;
+    }
+
+    .saved-properties {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .property-card {
+      background: #2a2a2a;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .property-card img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+    }
+
+    .property-info {
+      padding: 1rem;
+    }
+
+    .property-info h4 {
+      margin: 0;
+      margin-bottom: 0.5rem;
+    }
+
+    .property-info p {
+      color: #888;
+      font-size: 0.9rem;
+      margin: 0;
+    }
+
+    .activity-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      background: #2a2a2a;
+      padding: 1rem;
+      border-radius: 12px;
+    }
+
+    .activity-icon {
+      font-size: 1.5rem;
+    }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-text {
+      margin: 0;
+      margin-bottom: 0.3rem;
+    }
+
+    .activity-time {
+      color: #888;
+      font-size: 0.8rem;
+      margin: 0;
+    }
+
+    .preferences-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .preference-item {
+      background: #2a2a2a;
+      padding: 1rem;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .preference-icon {
+      font-size: 1.5rem;
+    }
+
+    .preference-label {
+      color: #888;
+      font-size: 0.9rem;
+    }
+
+    .preference-value {
+      font-weight: bold;
+    }
+
+    .profile-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .edit-profile-btn, .logout-btn {
+      flex: 1;
+      padding: 1rem;
+      border: none;
+      border-radius: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .edit-profile-btn {
+      background: linear-gradient(135deg, #36d1dc, #5b86e5);
+      color: #0e0e10;
+    }
+
+    .logout-btn {
+      background: #333;
+      color: white;
+    }
+
+    .edit-profile-btn:hover, .logout-btn:hover {
+      transform: scale(1.02);
+    }
+
+    @media (max-width: 768px) {
+      .profile-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+      }
+
+      .profile-badges {
+        justify-content: center;
+      }
+
+      .profile-actions {
+        flex-direction: column;
+      }
+    }
+
+    /* Builder Profile View Styles */
+    .builder-profile-container {
+      padding: 2rem;
+    }
+
+    .builder-profile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid #333;
+    }
+
+    .builder-profile-main {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .builder-profile-logo {
+      width: 120px;
+      height: 120px;
+      border-radius: 12px;
+      object-fit: cover;
+    }
+
+    .builder-contact-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .contact-btn, .schedule-btn {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .contact-btn {
+      background: linear-gradient(135deg, #36d1dc, #5b86e5);
+      color: #0e0e10;
+    }
+
+    .schedule-btn {
+      background: #2a2a2a;
+      color: white;
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .project-card {
+      background: #2a2a2a;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .project-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .project-info {
+      padding: 1.5rem;
+    }
+
+    .performance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .performance-card {
+      background: #2a2a2a;
+      padding: 1.5rem;
+      border-radius: 12px;
+    }
+
+    .chart-placeholder {
+      height: 150px;
+      background: #333;
+      border-radius: 8px;
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Customer Analytics Styles */
+    .viewing-timeline {
+      margin-top: 1rem;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 1.5rem;
+      padding: 1rem;
+      background: #2a2a2a;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+    }
+
+    .timeline-date {
+      min-width: 100px;
+      color: #888;
+    }
+
+    .timeline-content h4 {
+      margin: 0;
+      margin-bottom: 0.5rem;
+    }
+
+    .timeline-content p {
+      margin: 0;
+      color: #888;
+    }
+
+    .property-tags {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .property-tag {
+      background: #333;
+      padding: 0.3rem 0.8rem;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      color: #36d1dc;
+    }
+
+    @media (max-width: 768px) {
+      .builder-profile-header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .builder-profile-main {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .builder-contact-actions {
+        width: 100%;
+        flex-direction: column;
+      }
+
+      .timeline-item {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #333;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      background: rgba(51, 51, 51, 0.8);
+      border: none;
+      color: #888;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .back-btn:hover {
+      color: white;
+      background: rgba(54, 209, 220, 0.8);
+      transform: scale(1.1);
+    }
+
+    .modal-title {
+      margin: 0;
+      flex: 1;
+    }
+
+    .chart-container {
+      background: #2a2a2a;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      height: 300px;
+    }
+
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Model engagement section styles */
+    .model-engagement {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      padding: 0.5rem;
+      justify-content: center;
+    }
+
+    .engagement-stat {
+      position: relative;
+      width: 60px;
+      height: 60px;
+      background: rgba(42, 42, 42, 0.8);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .engagement-stat:hover {
+      transform: translateY(-5px);
+      background: rgba(54, 209, 220, 0.1);
+    }
+
+    .engagement-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .engagement-value {
+      font-size: 0.8rem;
+      font-weight: bold;
+      color: #36d1dc;
+    }
+
+    .engagement-tooltip {
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .engagement-stat:hover .engagement-tooltip {
+      opacity: 1;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .chart-container {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    /* Add hover effect to model viewer */
+    model-viewer {
+      transition: transform 0.3s ease;
+    }
+
+    model-viewer:hover {
+      transform: scale(1.02);
+    }
+
+    .engagement-trend {
+      height: 200px;
+      margin-top: 1rem;
+    }
+
+    /* Enhanced Customer Profile Sections */
+    .profile-section {
+      background: #1a1a1a;
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .profile-card {
+      background: #2a2a2a;
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: transform 0.3s ease;
+    }
+
+    .profile-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .profile-card-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .profile-card-icon {
+      font-size: 1.5rem;
+      color: #36d1dc;
+    }
+
+    .profile-card-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .profile-detail-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .profile-detail-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #333;
+    }
+
+    .profile-detail-item:last-child {
+      border-bottom: none;
+    }
+
+    .profile-detail-label {
+      color: #888;
+    }
+
+    .profile-detail-value {
+      font-weight: 500;
+    }
+
+    /* Edit Profile Modal Styles */
+    #editProfileModal {
+      max-width: 600px;
+    }
+
+    .edit-section {
+      margin-bottom: 2rem;
+    }
+
+    .edit-section h3 {
+      margin-bottom: 1rem;
+      color: #36d1dc;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #888;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="tel"],
+    .form-group select {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #333;
+      border-radius: 8px;
+      background: #1a1a1a;
+      color: white;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #36d1dc;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .save-btn, .cancel-btn {
+      flex: 1;
+      padding: 1rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .save-btn {
+      background: linear-gradient(135deg, #36d1dc, #5b86e5);
+      color: #0e0e10;
+    }
+
+    .cancel-btn {
+      background: #333;
+      color: white;
+    }
+
+    .save-btn:hover, .cancel-btn:hover {
+      transform: scale(1.02);
+    }
+
+    /* Like/Dislike Animation */
+    .engagement-stat.liked .engagement-icon,
+    .engagement-stat.disliked .engagement-icon {
+      animation: pulse 0.3s ease-in-out;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    .engagement-stat.liked .engagement-value {
+      color: #36d1dc;
+    }
+
+    .engagement-stat.disliked .engagement-value {
+      color: #ff4757;
     }
   </style>
 </head>
@@ -153,14 +1069,49 @@
         <option>Apartment</option>
         <option>Villa</option>
         <option>Duplex</option>
+        <option>Studio</option>
+        <option>Bungalow</option>
       </select>
     </div>
 
     <div class="card-grid">
+      <!-- Building A -->
       <div class="card">
         <model-viewer src="https://harshil-maru.github.io/models/assets/model/highrisebuild.glb" alt="Model A" auto-rotate camera-controls ar></model-viewer>
         <h3>Building A</h3>
         <p>Modern highrise with commercial and residential options.</p>
+        <div class="model-engagement">
+          <div class="engagement-stat">
+            <span class="engagement-icon">👁️</span>
+            <span class="engagement-value views-count">5.7k</span>
+            <span class="engagement-tooltip">Total Views</span>
+          </div>
+          <div class="engagement-stat">
+            <span class="engagement-icon">👍</span>
+            <span class="engagement-value likes-count">65</span>
+            <span class="engagement-tooltip">Likes</span>
+          </div>
+          <div class="engagement-stat">
+            <span class="engagement-icon">👎</span>
+            <span class="engagement-value ar-views">12</span>
+            <span class="engagement-tooltip">Dislikes</span>
+          </div>
+          <div class="engagement-stat">
+            <span class="engagement-icon">🔄</span>
+            <span class="engagement-value tour-count">36</span>
+            <span class="engagement-tooltip">Virtual Tours</span>
+          </div>
+          <div class="engagement-stat">
+            <span class="engagement-icon">💬</span>
+            <span class="engagement-value comments-count">2k</span>
+            <span class="engagement-tooltip">Comments</span>
+          </div>
+          <div class="engagement-stat">
+            <span class="engagement-icon">⭐</span>
+            <span class="engagement-value rating">4.8</span>
+            <span class="engagement-tooltip">Rating</span>
+          </div>
+        </div>
         <div class="view-selector">
           <select onchange="setViewMode(this)">
             <option value="phone">Phone</option>
@@ -172,10 +1123,44 @@
         <button onclick="saveWalkthrough('Building A')">Save Walkthrough</button>
         <button onclick="shareWalkthrough('Building A')">Share</button>
       </div>
+
+      <!-- Villa Supreme -->
       <div class="card">
-        <model-viewer src="https://harshil-maru.github.io/models/assets/model/house2.glb" alt="Model B" auto-rotate camera-controls ar></model-viewer>
+        <model-viewer src="https://harshil-maru.github.io/models/assets/model/house.glb" alt="Model B" auto-rotate camera-controls ar></model-viewer>
         <h3>Villa Supreme</h3>
         <p>Elegant villa with green space and modern amenities.</p>
+        <div class="model-engagement">
+          <div class="engagement-stat">
+            <span class="engagement-icon">👁️</span>
+            <span class="engagement-value views-count">7.8k</span>
+            <span class="engagement-tooltip">Total Views</span>
+          </div>
+          <div class="engagement-stat">
+            <span class="engagement-icon">👍</span>
+            <span class="engagement-value likes-count">500</span>
+            <span class="engagement-tooltip">Likes</span>
+          </div>
+          <div class="engagement-stat">
+            <span class="engagement-icon">👎</span>
+            <span class="engagement-value ar-views">100</span>
+            <span class="engagement-tooltip">Dislikes</span>
+          </div>
+          <div class="engagement-stat">
+            <span class="engagement-icon">🔄</span>
+            <span class="engagement-value tour-count">600</span>
+            <span class="engagement-tooltip">Virtual Tours</span>
+          </div>
+          <div class="engagement-stat">
+            <span class="engagement-icon">💬</span>
+            <span class="engagement-value comments-count">4.5k</span>
+            <span class="engagement-tooltip">Comments</span>
+          </div>
+          <div class="engagement-stat">
+            <span class="engagement-icon">⭐</span>
+            <span class="engagement-value rating">4.8</span>
+            <span class="engagement-tooltip">Rating</span>
+          </div>
+        </div>
         <div class="view-selector">
           <select onchange="setViewMode(this)">
             <option value="phone">Phone</option>
@@ -187,10 +1172,44 @@
         <button onclick="saveWalkthrough('Villa Supreme')">Save Walkthrough</button>
         <button onclick="shareWalkthrough('Villa Supreme')">Share</button>
       </div>
+
+      <!-- Duplex Elite -->
       <div class="card">
-        <model-viewer src="https://harshil-maru.github.io/models/assets/model/house.glb" alt="Model C" auto-rotate camera-controls ar></model-viewer>
-        <h3>Duplex Elite</h3>
-        <p>Stylish duplex perfect for families seeking comfort and design.</p>
+        <model-viewer src="https://harshil-maru.github.io/models/assets/model/valdene.glb" alt="Model C" auto-rotate camera-controls ar></model-viewer>
+        <h3>Working space</h3>
+        <p>Comfortable space for working and perfect layout</p>
+        <div class="model-engagement">
+          <div class="engagement-stat">
+            <span class="engagement-icon">👁️</span>
+            <span class="engagement-value views-count">8k</span>
+            <span class="engagement-tooltip">Total Views</span>
+          </div>
+          <div class="engagement-stat">
+            <span class="engagement-icon">👍</span>
+            <span class="engagement-value likes-count">650</span>
+            <span class="engagement-tooltip">Likes</span>
+          </div>
+          <div class="engagement-stat">
+            <span class="engagement-icon">👎</span>
+            <span class="engagement-value ar-views">254</span>
+            <span class="engagement-tooltip">Dislikes</span>
+          </div>
+          <div class="engagement-stat">
+            <span class="engagement-icon">🔄</span>
+            <span class="engagement-value tour-count">700</span>
+            <span class="engagement-tooltip">Virtual Tours</span>
+          </div>
+          <div class="engagement-stat">
+            <span class="engagement-icon">💬</span>
+            <span class="engagement-value comments-count">3k</span>
+            <span class="engagement-tooltip">Comments</span>
+          </div>
+          <div class="engagement-stat">
+            <span class="engagement-icon">⭐</span>
+            <span class="engagement-value rating">4.8</span>
+            <span class="engagement-tooltip">Rating</span>
+          </div>
+        </div>
         <div class="view-selector">
           <select onchange="setViewMode(this)">
             <option value="phone">Phone</option>
@@ -205,38 +1224,483 @@
     </div>
   </main>
 
+  <!-- Find My Builder Modal -->
   <div class="modal" id="builderModal">
     <h2>Find My Builder</h2>
-    <input type="text" placeholder="Search builder...">
-    <ul>
-      <li>Aryan Buildz</li>
-      <li>Skyline Constructions</li>
-      <li>DreamHome Builders</li>
-    </ul>
-    <button onclick="toggleModal('builderModal')">Close</button>
+    <div class="search-section">
+      <input type="text" placeholder="Search builders by name, location, or specialization..." id="builderSearch">
+      <div class="filter-tags">
+        <span class="filter-tag active">All</span>
+        <span class="filter-tag">Residential</span>
+        <span class="filter-tag">Commercial</span>
+        <span class="filter-tag">Top Rated</span>
+        <span class="filter-tag">New Projects</span>
+      </div>
+    </div>
+
+    <div class="builders-grid">
+      <!-- Builder Card 1 -->
+      <div class="builder-card">
+        <div class="builder-header">
+          <img src="https://ui-avatars.com/api/?name=Aryan+Buildz&background=random" alt="Builder Logo" class="builder-logo">
+          <div class="builder-rating">
+            <span class="stars">⭐⭐⭐⭐⭐</span>
+            <span class="rating-count">(128 reviews)</span>
+          </div>
+        </div>
+        <div class="builder-info">
+          <h3>Aryan Buildz</h3>
+          <p class="builder-location">📍 Mumbai, Maharashtra</p>
+          <div class="builder-stats">
+            <div class="stat">
+              <span class="stat-value">15+</span>
+              <span class="stat-label">Years</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">50+</span>
+              <span class="stat-label">Projects</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">98%</span>
+              <span class="stat-label">Success</span>
+            </div>
+          </div>
+          <div class="builder-specialties">
+            <span class="specialty-tag">Luxury Homes</span>
+            <span class="specialty-tag">Smart Homes</span>
+            <span class="specialty-tag">Eco-Friendly</span>
+          </div>
+          <button class="view-profile-btn" onclick="viewBuilderProfile('aryan-buildz')">View Profile</button>
+        </div>
+      </div>
+
+      <!-- Builder Card 2 -->
+      <div class="builder-card">
+        <div class="builder-header">
+          <img src="https://ui-avatars.com/api/?name=Skyline+Constructions&background=random" alt="Builder Logo" class="builder-logo">
+          <div class="builder-rating">
+            <span class="stars">⭐⭐⭐⭐½</span>
+            <span class="rating-count">(95 reviews)</span>
+          </div>
+        </div>
+        <div class="builder-info">
+          <h3>Skyline Constructions</h3>
+          <p class="builder-location">📍 Pune, Maharashtra</p>
+          <div class="builder-stats">
+            <div class="stat">
+              <span class="stat-value">10+</span>
+              <span class="stat-label">Years</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">35+</span>
+              <span class="stat-label">Projects</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">95%</span>
+              <span class="stat-label">Success</span>
+            </div>
+          </div>
+          <div class="builder-specialties">
+            <span class="specialty-tag">Commercial</span>
+            <span class="specialty-tag">Residential</span>
+            <span class="specialty-tag">Modern Design</span>
+          </div>
+          <button class="view-profile-btn" onclick="viewBuilderProfile('skyline')">View Profile</button>
+        </div>
+      </div>
+
+      <!-- Builder Card 3 -->
+      <div class="builder-card">
+        <div class="builder-header">
+          <img src="https://ui-avatars.com/api/?name=DreamHome+Builders&background=random" alt="Builder Logo" class="builder-logo">
+          <div class="builder-rating">
+            <span class="stars">⭐⭐⭐⭐⭐</span>
+            <span class="rating-count">(156 reviews)</span>
+          </div>
+        </div>
+        <div class="builder-info">
+          <h3>DreamHome Builders</h3>
+          <p class="builder-location">📍 Bangalore, Karnataka</p>
+          <div class="builder-stats">
+            <div class="stat">
+              <span class="stat-value">20+</span>
+              <span class="stat-label">Years</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">75+</span>
+              <span class="stat-label">Projects</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">99%</span>
+              <span class="stat-label">Success</span>
+            </div>
+          </div>
+          <div class="builder-specialties">
+            <span class="specialty-tag">Villas</span>
+            <span class="specialty-tag">Premium Homes</span>
+            <span class="specialty-tag">Interior Design</span>
+          </div>
+          <button class="view-profile-btn" onclick="viewBuilderProfile('dreamhome')">View Profile</button>
+        </div>
+      </div>
+    </div>
+    <button class="close-modal-btn" onclick="toggleModal('builderModal')">Close</button>
   </div>
 
+  <!-- Profile Modal -->
   <div class="modal" id="profileModal">
-    <h2>Customer Profile</h2>
-    <p><strong>Name:</strong> Aryan</p>
-    <p><strong>Email:</strong> aryan@example.com</p>
-    <p><strong>Phone:</strong> +1234567890</p>
-    <h3>Saved Walkthroughs</h3>
-    <ul id="savedWalkthroughs"></ul>
-    <input type="text" placeholder="Enter code to join walkthrough" id="joinCode">
-    <button onclick="joinWalkthrough()">Join</button>
-    <button onclick="toggleModal('profileModal')">Close</button>
+    <div class="modal-header">
+      <button class="back-btn" onclick="toggleModal('profileModal')">←</button>
+      <h2 class="modal-title">Customer Profile</h2>
+    </div>
+
+    <div class="profile-section">
+      <div class="profile-card-header">
+        <div class="profile-card-icon">👤</div>
+        <h3>Personal Information</h3>
+      </div>
+      <div class="profile-grid">
+        <div class="profile-card">
+          <div class="profile-card-header">
+            <div class="profile-card-icon">📋</div>
+            <h4 class="profile-card-title">Basic Details</h4>
+          </div>
+          <ul class="profile-detail-list">
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Full Name</span>
+              <span class="profile-detail-value">Aryan Kumar</span>
+            </li>
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Email</span>
+              <span class="profile-detail-value">aryan@example.com</span>
+            </li>
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Phone</span>
+              <span class="profile-detail-value">+1234567890</span>
+            </li>
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Location</span>
+              <span class="profile-detail-value">Mumbai, India</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="profile-card">
+          <div class="profile-card-header">
+            <div class="profile-card-icon">📅</div>
+            <h4 class="profile-card-title">Account Details</h4>
+          </div>
+          <ul class="profile-detail-list">
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Member Since</span>
+              <span class="profile-detail-value">January 2024</span>
+            </li>
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Account Type</span>
+              <span class="profile-detail-value">Premium</span>
+            </li>
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Last Active</span>
+              <span class="profile-detail-value">Today</span>
+            </li>
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Saved Properties</span>
+              <span class="profile-detail-value">8</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-section">
+      <div class="profile-card-header">
+        <div class="profile-card-icon">📊</div>
+        <h3>Activity Overview</h3>
+      </div>
+      <div class="profile-grid">
+        <div class="profile-card">
+          <div class="profile-card-header">
+            <div class="profile-card-icon">🔍</div>
+            <h4 class="profile-card-title">Search Patterns</h4>
+          </div>
+          <ul class="profile-detail-list">
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Most Searched Area</span>
+              <span class="profile-detail-value">Bandra West</span>
+            </li>
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Price Range</span>
+              <span class="profile-detail-value">₹70L - ₹1.2Cr</span>
+            </li>
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Property Types</span>
+              <span class="profile-detail-value">Apartment, Villa</span>
+            </li>
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Recent Searches</span>
+              <span class="profile-detail-value">15</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="profile-card">
+          <div class="profile-card-header">
+            <div class="profile-card-icon">💬</div>
+            <h4 class="profile-card-title">Interactions</h4>
+          </div>
+          <ul class="profile-detail-list">
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Builder Contacts</span>
+              <span class="profile-detail-value">5</span>
+            </li>
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Saved Contacts</span>
+              <span class="profile-detail-value">3</span>
+            </li>
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Messages Sent</span>
+              <span class="profile-detail-value">15</span>
+            </li>
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Response Rate</span>
+              <span class="profile-detail-value">92%</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-section">
+      <div class="profile-card-header">
+        <div class="profile-card-icon">⚙️</div>
+        <h3>Preferences & Settings</h3>
+      </div>
+      <div class="profile-grid">
+        <div class="profile-card">
+          <div class="profile-card-header">
+            <div class="profile-card-icon">🔔</div>
+            <h4 class="profile-card-title">Notification Settings</h4>
+          </div>
+          <ul class="profile-detail-list">
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Email Alerts</span>
+              <span class="profile-detail-value">Enabled</span>
+            </li>
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">SMS Alerts</span>
+              <span class="profile-detail-value">Enabled</span>
+            </li>
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Price Alerts</span>
+              <span class="profile-detail-value">Weekly</span>
+            </li>
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">New Listing Alerts</span>
+              <span class="profile-detail-value">Daily</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="profile-card">
+          <div class="profile-card-header">
+            <div class="profile-card-icon">📱</div>
+            <h4 class="profile-card-title">App Preferences</h4>
+          </div>
+          <ul class="profile-detail-list">
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Dark Mode</span>
+              <span class="profile-detail-value">Enabled</span>
+            </li>
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Language</span>
+              <span class="profile-detail-value">English</span>
+            </li>
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Currency</span>
+              <span class="profile-detail-value">INR (₹)</span>
+            </li>
+            <li class="profile-detail-item">
+              <span class="profile-detail-label">Area Unit</span>
+              <span class="profile-detail-value">Sq ft</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-actions">
+      <button class="edit-profile-btn">Edit Profile</button>
+      <button class="logout-btn" onclick="window.location.href='index.html'">Log Out</button>
+    </div>
   </div>
 
+  <!-- Builder Profile View Modal -->
+  <div class="modal" id="builderProfileView">
+    <div class="builder-profile-container">
+      <div class="modal-header">
+        <button class="back-btn" onclick="toggleModal('builderProfileView'); toggleModal('builderModal')">←</button>
+        <h2 class="modal-title" id="builderProfileName"></h2>
+      </div>
+      <div class="builder-profile-main">
+        <img src="" alt="Builder Logo" class="builder-profile-logo" id="builderProfileLogo">
+        <div class="builder-profile-info">
+          <p class="builder-location" id="builderProfileLocation"></p>
+          <div class="builder-rating">
+            <span id="builderProfileRating"></span>
+            <span class="rating-count" id="builderProfileReviewCount"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="analytics-section">
+        <h3>Project Analytics</h3>
+        <div class="analytics-grid">
+          <div class="chart-container">
+            <canvas id="projectTypesChart"></canvas>
+          </div>
+          <div class="chart-container">
+            <canvas id="completionTimeChart"></canvas>
+          </div>
+        </div>
+        <div class="analytics-grid">
+          <div class="chart-container">
+            <canvas id="customerSatisfactionChart"></canvas>
+          </div>
+          <div class="chart-container">
+            <canvas id="projectProgressChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="projects-section">
+        <h3>Featured Projects</h3>
+        <div class="projects-grid" id="builderProjects">
+          <!-- Project cards will be dynamically added here -->
+        </div>
+      </div>
+
+      <div class="performance-section">
+        <h3>Performance Metrics</h3>
+        <div class="performance-grid">
+          <div class="performance-card">
+            <h4>Project Completion Time</h4>
+            <div class="chart-placeholder">
+              <!-- Add chart here -->
+              <div class="stat-value">Average: 8 months</div>
+            </div>
+          </div>
+          <div class="performance-card">
+            <h4>Customer Satisfaction</h4>
+            <div class="chart-placeholder">
+              <!-- Add chart here -->
+              <div class="stat-value">4.8/5</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="close-modal-btn" onclick="toggleModal('builderProfileView')">Close</button>
+  </div>
+
+  <!-- Invite Code Modal -->
   <div class="modal" id="inviteModal">
     <h2>Invite Code</h2>
     <p>Your invite code: <strong id="inviteCode"></strong></p>
     <button onclick="toggleModal('inviteModal')">Close</button>
   </div>
 
+  <!-- Edit Profile Modal -->
+  <div class="modal" id="editProfileModal">
+    <div class="modal-header">
+      <button class="back-btn" onclick="toggleModal('editProfileModal'); toggleModal('profileModal')">←</button>
+      <h2 class="modal-title">Edit Profile</h2>
+    </div>
+    <form id="editProfileForm" onsubmit="updateProfile(event)">
+      <div class="edit-section">
+        <h3>Basic Information</h3>
+        <div class="form-group">
+          <label for="fullName">Full Name</label>
+          <input type="text" id="fullName" value="Aryan Kumar" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" value="aryan@example.com" required>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone</label>
+          <input type="tel" id="phone" value="+1234567890" required>
+        </div>
+        <div class="form-group">
+          <label for="location">Location</label>
+          <input type="text" id="location" value="Mumbai, India" required>
+        </div>
+      </div>
+
+      <div class="edit-section">
+        <h3>Notification Preferences</h3>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="emailAlerts" checked>
+            Email Alerts
+          </label>
+        </div>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="smsAlerts" checked>
+            SMS Alerts
+          </label>
+        </div>
+        <div class="form-group">
+          <label for="priceAlerts">Price Alert Frequency</label>
+          <select id="priceAlerts">
+            <option value="daily">Daily</option>
+            <option value="weekly" selected>Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="edit-section">
+        <h3>App Settings</h3>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="darkMode" checked>
+            Dark Mode
+          </label>
+        </div>
+        <div class="form-group">
+          <label for="language">Language</label>
+          <select id="language">
+            <option value="en" selected>English</option>
+            <option value="hi">Hindi</option>
+            <option value="mr">Marathi</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="currency">Currency</label>
+          <select id="currency">
+            <option value="INR" selected>INR (₹)</option>
+            <option value="USD">USD ($)</option>
+            <option value="EUR">EUR (€)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="save-btn">Save Changes</button>
+        <button type="button" class="cancel-btn" onclick="toggleModal('editProfileModal'); toggleModal('profileModal')">Cancel</button>
+      </div>
+    </form>
+  </div>
+
   <script>
     function toggleModal(id) {
-      document.getElementById(id).classList.toggle('show');
+      const modal = document.getElementById(id);
+      modal.classList.toggle('show');
+      
+      if (id === 'profileModal' && modal.classList.contains('show')) {
+        initializeCustomerCharts();
+      }
     }
 
     function generateInviteCode(name) {
@@ -263,14 +1727,650 @@
       alert(`View mode set to ${select.value}`);
     }
 
-    function joinWalkthrough() {
-      const code = document.getElementById('joinCode').value.trim();
-      if (code.length > 0) {
-        alert(`Joining walkthrough with code: ${code}`);
-      } else {
-        alert("Please enter a valid code");
+    function viewBuilderProfile(builderId) {
+      // Get builder data (this would typically come from an API)
+      const builderData = {
+        'aryan-buildz': {
+          name: 'Aryan Buildz',
+          location: 'Mumbai, Maharashtra',
+          logo: 'https://ui-avatars.com/api/?name=Aryan+Buildz&background=random',
+          rating: '⭐⭐⭐⭐⭐',
+          reviews: '128 reviews',
+          projects: [
+            {
+              name: 'Luxury Heights',
+              location: 'Bandra West',
+              type: 'Residential Tower',
+              units: '45 units',
+              status: 'Completed',
+              image: 'https://picsum.photos/400/300'
+            },
+            {
+              name: 'Green Valley',
+              location: 'Powai',
+              type: 'Township',
+              units: '120 units',
+              status: 'Ongoing',
+              image: 'https://picsum.photos/401/300'
+            }
+          ]
+        },
+        // Add more builders here
+      };
+
+      const builder = builderData[builderId];
+      if (!builder) return;
+
+      // Update builder profile view
+      document.getElementById('builderProfileLogo').src = builder.logo;
+      document.getElementById('builderProfileName').textContent = builder.name;
+      document.getElementById('builderProfileLocation').textContent = builder.location;
+      document.getElementById('builderProfileRating').textContent = builder.rating;
+      document.getElementById('builderProfileReviewCount').textContent = builder.reviews;
+
+      // Generate project cards
+      const projectsContainer = document.getElementById('builderProjects');
+      projectsContainer.innerHTML = builder.projects.map(project => `
+        <div class="project-card">
+          <img src="${project.image}" alt="${project.name}">
+          <div class="project-info">
+            <h4>${project.name}</h4>
+            <p>${project.location}</p>
+            <div class="project-details">
+              <span class="project-type">${project.type}</span>
+              <span class="project-units">${project.units}</span>
+              <span class="project-status">${project.status}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      toggleModal('builderModal'); // Close the builder list modal
+      toggleModal('builderProfileView'); // Open the builder profile modal
+      initializeCharts(builderId); // Initialize the charts
+    }
+
+    // Add filter tag functionality
+    document.querySelectorAll('.filter-tag').forEach(tag => {
+      tag.addEventListener('click', () => {
+        document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+        tag.classList.add('active');
+        // Implement filtering logic here
+      });
+    });
+
+    // Add search functionality
+    document.getElementById('builderSearch').addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      // Implement search logic here
+    });
+
+    // Add click outside to close modal functionality
+    document.querySelectorAll('.modal').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('show');
+        }
+      });
+    });
+
+    function initializeCharts(builderId) {
+      const chartConfig = {
+        animation: {
+          duration: 2000,
+          easing: 'easeInOutQuart'
+        }
+      };
+
+      // Project Types Chart with animation
+      new Chart(document.getElementById('projectTypesChart'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Residential', 'Commercial', 'Mixed Use'],
+          datasets: [{
+            data: [65, 25, 10],
+            backgroundColor: ['#36d1dc', '#5b86e5', '#4433ff'],
+            animate: true
+          }]
+        },
+        options: {
+          ...chartConfig,
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Project Types Distribution',
+              color: 'white'
+            },
+            legend: {
+              position: 'bottom',
+              labels: { color: 'white' }
+            }
+          }
+        }
+      });
+
+      // Completion Time Chart with animation
+      new Chart(document.getElementById('completionTimeChart'), {
+        type: 'bar',
+        data: {
+          labels: ['2019', '2020', '2021', '2022', '2023'],
+          datasets: [{
+            label: 'Average Completion Time (months)',
+            data: [12, 10, 9, 8, 7],
+            backgroundColor: '#36d1dc'
+          }]
+        },
+        options: {
+          ...chartConfig,
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Project Completion Timeline',
+              color: 'white'
+            },
+            legend: {
+              labels: {
+                color: 'white'
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                color: '#333'
+              },
+              ticks: {
+                color: 'white'
+              }
+            },
+            x: {
+              grid: {
+                color: '#333'
+              },
+              ticks: {
+                color: 'white'
+              }
+            }
+          }
+        }
+      });
+
+      // Customer Satisfaction Chart with animation
+      new Chart(document.getElementById('customerSatisfactionChart'), {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          datasets: [{
+            label: 'Satisfaction Score',
+            data: [4.5, 4.6, 4.7, 4.8, 4.9, 4.8],
+            borderColor: '#5b86e5',
+            tension: 0.4
+          }]
+        },
+        options: {
+          ...chartConfig,
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Customer Satisfaction Trend',
+              color: 'white'
+            },
+            legend: {
+              labels: {
+                color: 'white'
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: false,
+              grid: {
+                color: '#333'
+              },
+              ticks: {
+                color: 'white'
+              }
+            },
+            x: {
+              grid: {
+                color: '#333'
+              },
+              ticks: {
+                color: 'white'
+              }
+            }
+          }
+        }
+      });
+
+      // Project Progress Chart with animation
+      new Chart(document.getElementById('projectProgressChart'), {
+        type: 'pie',
+        data: {
+          labels: ['Completed', 'Ongoing', 'Planning'],
+          datasets: [{
+            data: [28, 4, 3],
+            backgroundColor: ['#36d1dc', '#5b86e5', '#4433ff']
+          }]
+        },
+        options: {
+          ...chartConfig,
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Project Status Distribution',
+              color: 'white'
+            },
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: 'white'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function initializeCustomerCharts() {
+      // Property Type Preference Chart
+      new Chart(document.getElementById('propertyTypePreference'), {
+        type: 'radar',
+        data: {
+          labels: ['Apartment', 'Villa', 'Penthouse', 'Duplex', 'Studio'],
+          datasets: [{
+            label: 'Viewing Frequency',
+            data: [80, 60, 40, 30, 20],
+            backgroundColor: 'rgba(54, 209, 220, 0.2)',
+            borderColor: '#36d1dc',
+            pointBackgroundColor: '#36d1dc'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Property Type Interests',
+              color: 'white'
+            },
+            legend: {
+              labels: {
+                color: 'white'
+              }
+            }
+          },
+          scales: {
+            r: {
+              grid: {
+                color: '#333'
+              },
+              pointLabels: {
+                color: 'white'
+              },
+              ticks: {
+                color: 'white'
+              }
+            }
+          }
+        }
+      });
+
+      // Location Preference Chart
+      new Chart(document.getElementById('locationPreference'), {
+        type: 'bar',
+        data: {
+          labels: ['Mumbai', 'Pune', 'Bangalore', 'Delhi', 'Chennai'],
+          datasets: [{
+            label: 'Properties Viewed',
+            data: [25, 18, 15, 12, 8],
+            backgroundColor: '#5b86e5'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Location Preferences',
+              color: 'white'
+            },
+            legend: {
+              labels: {
+                color: 'white'
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                color: '#333'
+              },
+              ticks: {
+                color: 'white'
+              }
+            },
+            x: {
+              grid: {
+                color: '#333'
+              },
+              ticks: {
+                color: 'white'
+              }
+            }
+          }
+        }
+      });
+
+      // Viewing History Chart
+      new Chart(document.getElementById('viewingHistory'), {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          datasets: [{
+            label: 'Properties Viewed',
+            data: [5, 8, 12, 15, 20, 15],
+            borderColor: '#36d1dc',
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Monthly Viewing Activity',
+              color: 'white'
+            },
+            legend: {
+              labels: {
+                color: 'white'
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                color: '#333'
+              },
+              ticks: {
+                color: 'white'
+              }
+            },
+            x: {
+              grid: {
+                color: '#333'
+              },
+              ticks: {
+                color: 'white'
+              }
+            }
+          }
+        }
+      });
+
+      // Budget Distribution Chart
+      new Chart(document.getElementById('budgetDistribution'), {
+        type: 'doughnut',
+        data: {
+          labels: ['<500k', '500k-750k', '750k-1M', '>1M'],
+          datasets: [{
+            data: [10, 45, 30, 15],
+            backgroundColor: ['#36d1dc', '#5b86e5', '#4433ff', '#8033ff']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Budget Range Distribution',
+              color: 'white'
+            },
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: 'white'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Function to initialize model engagement charts
+    function initializeModelEngagement(modelId) {
+      const ctx = document.querySelector(`#${modelId} .engagement-trend`).getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: Array.from({length: 30}, (_, i) => i + 1),
+          datasets: [
+            {
+              label: 'Views',
+              data: generateRandomData(30, 50, 200),
+              borderColor: '#36d1dc',
+              tension: 0.4
+            },
+            {
+              label: 'Likes',
+              data: generateRandomData(30, 20, 100),
+              borderColor: '#5b86e5',
+              tension: 0.4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          animation: {
+            duration: 2000,
+            easing: 'easeInOutQuart'
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Daily Engagement',
+              color: 'white'
+            },
+            legend: {
+              labels: { color: 'white' }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: '#333' },
+              ticks: { color: 'white' }
+            },
+            x: {
+              grid: { color: '#333' },
+              ticks: { color: 'white' }
+            }
+          }
+        }
+      });
+    }
+
+    // Helper function to generate random data for engagement metrics
+    function generateRandomData(points, min, max) {
+      return Array.from({length: points}, () => 
+        Math.floor(Math.random() * (max - min + 1)) + min
+      );
+    }
+
+    // Update the card creation logic to include engagement metrics
+    function createModelCard(modelData) {
+      const template = document.getElementById('modelCardTemplate');
+      const card = template.content.cloneNode(true);
+      
+      // Set model data
+      const modelViewer = card.querySelector('model-viewer');
+      modelViewer.src = modelData.src;
+      modelViewer.alt = modelData.name;
+      
+      card.querySelector('h3').textContent = modelData.name;
+      card.querySelector('p').textContent = modelData.description;
+      
+      // Set engagement metrics
+      if (modelData.engagement) {
+        card.querySelector('.views-count').textContent = formatNumber(modelData.engagement.views);
+        card.querySelector('.likes-count').textContent = formatNumber(modelData.engagement.likes);
+        card.querySelector('.ar-views').textContent = formatNumber(modelData.engagement.arViews);
+        card.querySelector('.tour-count').textContent = formatNumber(modelData.engagement.tours);
+        card.querySelector('.comments-count').textContent = formatNumber(modelData.engagement.comments);
+        card.querySelector('.rating').textContent = modelData.engagement.rating.toFixed(1);
+      }
+      
+      return card;
+    }
+
+    // Helper function to format numbers (e.g., 1000 -> 1k)
+    function formatNumber(num) {
+      if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + 'M';
+      }
+      if (num >= 1000) {
+        return (num / 1000).toFixed(1) + 'k';
+      }
+      return num.toString();
+    }
+
+    // Example model data with engagement metrics
+    const modelData = {
+      id: 'building-a',
+      name: 'Building A',
+      src: 'https://example.com/model.glb',
+      description: 'Modern highrise with commercial and residential options.',
+      engagement: {
+        views: 1234,
+        likes: 856,
+        arViews: 234,
+        tours: 567,
+        comments: 89,
+        rating: 4.8
+      }
+    };
+
+    // Update existing charts with animation
+    Chart.defaults.animation = {
+      duration: 2000,
+      easing: 'easeInOutQuart'
+    };
+
+    // Profile Management
+    function updateProfile(event) {
+      event.preventDefault();
+      
+      // Get form values
+      const formData = {
+        fullName: document.getElementById('fullName').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        location: document.getElementById('location').value,
+        emailAlerts: document.getElementById('emailAlerts').checked,
+        smsAlerts: document.getElementById('smsAlerts').checked,
+        priceAlerts: document.getElementById('priceAlerts').value,
+        darkMode: document.getElementById('darkMode').checked,
+        language: document.getElementById('language').value,
+        currency: document.getElementById('currency').value
+      };
+
+      // Update profile display
+      document.querySelector('.profile-detail-value:contains("Full Name")').textContent = formData.fullName;
+      document.querySelector('.profile-detail-value:contains("Email")').textContent = formData.email;
+      document.querySelector('.profile-detail-value:contains("Phone")').textContent = formData.phone;
+      document.querySelector('.profile-detail-value:contains("Location")').textContent = formData.location;
+
+      // Close edit modal and show profile
+      toggleModal('editProfileModal');
+      toggleModal('profileModal');
+
+      // Show success message
+      alert('Profile updated successfully!');
+    }
+
+    // Like/Dislike System
+    function handleEngagement(element, action) {
+      const stat = element.closest('.engagement-stat');
+      const valueElement = stat.querySelector('.engagement-value');
+      const currentValue = parseInt(valueElement.textContent);
+      
+      if (action === 'like') {
+        if (stat.classList.contains('liked')) {
+          stat.classList.remove('liked');
+          valueElement.textContent = currentValue - 1;
+        } else {
+          stat.classList.add('liked');
+          if (stat.classList.contains('disliked')) {
+            const dislikeElement = stat.parentElement.querySelector('.engagement-stat:contains("👎")');
+            const dislikeValue = dislikeElement.querySelector('.engagement-value');
+            dislikeValue.textContent = parseInt(dislikeValue.textContent) - 1;
+            stat.classList.remove('disliked');
+          }
+          valueElement.textContent = currentValue + 1;
+        }
+      } else if (action === 'dislike') {
+        if (stat.classList.contains('disliked')) {
+          stat.classList.remove('disliked');
+          valueElement.textContent = currentValue - 1;
+        } else {
+          stat.classList.add('disliked');
+          if (stat.classList.contains('liked')) {
+            const likeElement = stat.parentElement.querySelector('.engagement-stat:contains("👍")');
+            const likeValue = likeElement.querySelector('.engagement-value');
+            likeValue.textContent = parseInt(likeValue.textContent) - 1;
+            stat.classList.remove('liked');
+          }
+          valueElement.textContent = currentValue + 1;
+        }
       }
     }
+
+    // Initialize dummy data for engagement metrics
+    document.addEventListener('DOMContentLoaded', function() {
+      const cards = document.querySelectorAll('.card');
+      cards.forEach((card, index) => {
+        // Generate random engagement numbers
+        const views = Math.floor(Math.random() * 10000) + 1000;
+        const likes = Math.floor(Math.random() * 1000) + 100;
+        const dislikes = Math.floor(Math.random() * 200) + 50;
+        const tours = Math.floor(Math.random() * 500) + 50;
+        const comments = Math.floor(Math.random() * 300) + 20;
+        const rating = (4 + Math.random()).toFixed(1);
+
+        // Update metrics
+        card.querySelector('.views-count').textContent = formatNumber(views);
+        card.querySelector('.likes-count').textContent = formatNumber(likes);
+        card.querySelector('.ar-views').textContent = formatNumber(dislikes);
+        card.querySelector('.tour-count').textContent = formatNumber(tours);
+        card.querySelector('.comments-count').textContent = formatNumber(comments);
+        card.querySelector('.rating').textContent = rating;
+
+        // Add click handlers for like/dislike
+        const likeBtn = card.querySelector('.engagement-stat:contains("👍")');
+        const dislikeBtn = card.querySelector('.engagement-stat:contains("👎")');
+        
+        if (likeBtn) {
+          likeBtn.onclick = () => handleEngagement(likeBtn, 'like');
+        }
+        if (dislikeBtn) {
+          dislikeBtn.onclick = () => handleEngagement(dislikeBtn, 'dislike');
+        }
+      });
+    });
+
+    // Update edit profile button handler
+    document.querySelector('.edit-profile-btn').onclick = function() {
+      toggleModal('profileModal');
+      toggleModal('editProfileModal');
+    };
   </script>
 </body>
 </html>
