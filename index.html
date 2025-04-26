@@ -6,6 +6,136 @@
     <title>APTURA - VR House Tour</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+    <style> /* CSS for pricing section*/
+      *
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+      }
+      
+      .pricing-section {
+        background: #000000;
+        color: #ffffff;
+        padding: 40px 20px;
+        text-align: center;
+      }
+      .plan-title{
+        padding: 50px 20px;
+        color: #00BFFF;
+        text-align: center;
+      }
+  
+      .toggle {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 40px;
+      }
+  
+      .toggle input[type="checkbox"] {
+        display: none;
+      }
+  
+      .toggle label {
+        background: #1e1e1e;
+        border: 1px solid #333;
+        padding: 10px 30px;
+        border-radius: 30px;
+        cursor: pointer;
+        position: relative;
+        color: #fff;
+        transition: all 0.3s ease;
+      }
+  
+      .toggle label::before {
+        content: "";
+        position: absolute;
+        top: -2px;
+        left: 0px;
+        width: 24px;
+        height: 24px;
+        background: #fff;
+        border-radius: 50%;
+        transition: 0.3s;
+      }
+  
+      .toggle input:checked + label::before {
+        transform: translateX(40px);
+      }
+  
+      .toggle span {
+        margin: 0 10px;
+        font-size: 0.9rem;
+        color: #ccc;
+      }
+  
+      .pricing-container {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+  
+      .plan {
+        background: #1c1a1a;
+        color: #ffffff;
+        border-radius: 16px;
+        padding: 30px;
+        width: 280px;
+        text-align: center;
+        transition: 0.3s ease;
+      }
+  
+      .plan:hover {
+        transform:scale(1.05);
+        box-shadow: 0 0 20px #00BFFF
+      }
+  
+      .plan h2 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+      }
+  
+      .plan .price {
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+  
+      .plan ul {
+        list-style: none;
+        margin: 20px 0;
+      }
+  
+      .plan ul li {
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+      }
+  
+      .plan button {
+        font-size: 100%;
+        background: #ffffff;
+        color: #000000;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s ease;
+      }
+  
+      .plan button:hover {
+        background: #222;
+      }
+  
+      @media (max-width: 768px) {
+        .pricing-container {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    </style>
+
 </head>
 
 <body>
@@ -25,22 +155,25 @@
             <img data-aos="fade-down" data-aos-duration="1000" src="assets/APTURA.png" alt="APTURA Logo" class="logo">
 
             <nav>
-                <a data-aos="fade-down" data-aos-duration="1000" href="#">Home</a>
-                <a data-aos="fade-down" data-aos-duration="1500" href="#">Features</a>
-                <a data-aos="fade-down" data-aos-duration="2000" href="#">Connections</a>
-                <a data-aos="fade-down" data-aos-duration="2500" href="#">About</a>
-                <a data-aos="fade-down" data-aos-duration="3000" href="#">Contact</a>
+                <a data-aos="fade-down" data-aos-duration="1000" href="#home">Home</a>
+                <a data-aos="fade-down" data-aos-duration="1500" href="#features">Features</a>
+                <a data-aos="fade-down" data-aos-duration="2000" href="#connections">Connections</a>
+                <a data-aos="fade-down" data-aos-duration="2500" href="#pricing">Pricing</a>
+                <a data-aos="fade-down" data-aos-duration="2500" href="#faqs">FAQs</a>
+                <a data-aos="fade-down" data-aos-duration="2500" href="#testimonials">About</a>
+                <a data-aos="fade-down" data-aos-duration="3000" href="#contact">Contact</a>
             </nav>
         
-            <button data-aos="fade-down" data-aos-duration="1500" class="btn-signing">Login</button>
+            <button data-aos="fade-down" data-aos-duration="1500" class="btn-signing" onclick="window.location.href='signin.html'">Login</button>
         </header>
         
         <!-- Hero Section -->
-        <section class="hero">
+        <section class="hero" id="home">
             <div class="hero-content">
                 <h1 class="fade-in">Walk in Imagination</h1>
                 <p class="fade-in">Experience a new way of home exploration with APTURA VR tours.</p>
-                <a href="#" class="cta-button">Start Your Tour</a>
+                <a href="signin.html" class="cta-button">Start Your Tour</a>
+                <a href="signin2.html" class="cta-button">I'm Builder</a>
             </div>
             <!-- Background Video -->
             <video autoplay muted loop id="bgVideo">
@@ -50,11 +183,735 @@
 
         </section>
     </div>
+    
+    
+  <!-- SCROLLABLE CONTENT --> 
+ 
+  <!-- What is Aptura Section --> 
 
-    <script src="script.js"></script>
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-    <script>
-      AOS.init();
-    </script>
+  <section class="content"> 
+    <div class="description">
+      <h2 data-aos="fade-up" data-aos-duration="1500">What is APTURA?</h2> 
+      <p data-aos="fade-up" data-aos-duration="2000"> APTURA is an immersive VR platform that helps customers visualize their dream home before it's built. We provide a seamless virtual tour experience for both buyers and builders.
+      </p>
+    </div>
+  
+
+   
+
+   <!-- Feature Slider Section (Updated with Controls & Autoplay) -->
+
+  <!-- Feature Slider Section -->
+<!-- HTML: Feature Slider Section -->
+<section class="feature-slider-section" id="features">
+  <h2 data-aos="fade-up" data-aos-duration="1500" class="section-heading">Features That Redefine Virtual Touring</h2>
+
+  <div data-aos="fade-up" data-aos-duration="1500" class="slider-container">
+    <div class="slider" id="featureSlider">
+
+      <div class="slide">
+        <div class="image-placeholder"></div>
+        <div class="slide-content">
+          <h3>Immersive VR Apartment Tours</h3>
+          <p>Step inside your future home with lifelike 3D virtual reality tours powered by Oculus Quest 2.</p>
+          <ul>
+            <li>Smooth, intuitive navigation</li>
+            <li>Explore interiors like you're really there</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="slide">
+        <div class="image-placeholder"></div>
+        <div class="slide-content">
+          <h3>Real-Time VR Casting to Mobile</h3>
+          <p>Share the experience live with your family or friends—no headset required.</p>
+          <ul>
+            <li>Stream your VR view directly to any Android phone</li>
+            <li>View-only mode for remote users</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="slide">
+        <div class="image-placeholder"></div>
+        <div class="slide-content">
+          <h3>Explore Multiple Apartment Models</h3>
+          <p>From cozy studios to luxury flats—explore all layouts in one app.</p>
+          <ul>
+            <li>Visual selection of apartment types</li>
+            <li>3D previews and smooth transitions</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="slide">
+        <div class="image-placeholder"></div>
+        <div class="slide-content">
+          <h3>Ultra-Responsive & Seamless Experience</h3>
+          <p>No lags. No glitches. Just smooth, high-quality virtual tours.</p>
+          <ul>
+            <li>Optimized for speed and clarity</li>
+            <li>Works smoothly on Quest 2 and Android</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="slide">
+        <div class="image-placeholder"></div>
+        <div class="slide-content">
+          <h3>Designed for Remote Decision-Making</h3>
+          <p>Perfect for families deciding together from different locations.</p>
+          <ul>
+            <li>Involve distant relatives in choosing your next home</li>
+            <li>Real-time viewing removes location barriers</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="slide">
+        <div class="image-placeholder"></div>
+        <div class="slide-content">
+          <h3>Built with Smart Tech</h3>
+          <p>A blend of cutting-edge VR, mobile streaming, and easy UI.</p>
+          <ul>
+            <li>Lightweight, no coding app integration (Appy Pie)</li>
+            <li>Future-ready architecture</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+    <div data-aos="fade-up" data-aos-duration="1500" class="slider-nav" id="sliderNav"></div>
+  
+</section>
+
+<!-- CSS: Feature Slider Styles -->
+<style>
+.feature-slider-section {
+  background-color: #000;
+  padding: 100px 20px;
+  color: #00BFFF;
+  text-align: center;
+}
+
+.section-heading {
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+}
+
+.slider-container {
+  max-width: 100%;
+  height: 360px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 12px;
+  background-color: #111;
+  padding: 20px;
+}
+
+.slider {
+  display: flex;
+  width: calc(100% * 6);
+  height: 200px;
+  transition: transform 0.5s ease-in-out;
+  
+}
+
+.slide {
+  flex: 0 0 100%;
+  max-width: 100%;
+  height: 350px;
+  box-sizing: border-box;
+  background-color: #1c1c1c;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  padding: 0;
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 200px;
+  background-color: #2a2a2a;
+  border-radius: 10px 10px 0 0;
+}
+
+.slide-content {
+  padding: 30px 20px;
+  width: 100%;
+}
+
+.slide h3 {
+  font-size: 1.5rem;
+  color: #00BFFF;
+  margin-bottom: 10px;
+}
+
+.slide p {
+  font-size: 1rem;
+  color: #eee;
+  margin-bottom: 10px;
+}
+
+.slide ul {
+  list-style: disc;
+  color: #ccc;
+  font-size: 0.95rem;
+  text-align: left;
+  padding-left: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.slider-nav {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 8px;
+}
+
+.slider-nav button {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background-color: #444;
+  cursor: pointer;
+}
+
+.slider-nav button.active {
+  background-color: #00BFFF;
+}
+</style>
+
+<!-- JS: Feature Slider Logic -->
+<script>
+const slider = document.getElementById('featureSlider');
+const slides = document.querySelectorAll('.slide');
+const navContainer = document.getElementById('sliderNav');
+let currentIndex = 0;
+
+slides.forEach((_, index) => {
+  const dot = document.createElement('button');
+  dot.addEventListener('click', () => goToSlide(index));
+  navContainer.appendChild(dot);
+});
+
+const dots = navContainer.querySelectorAll('button');
+
+function updateSlider() {
+  slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+  dots.forEach(dot => dot.classList.remove('active'));
+  dots[currentIndex].classList.add('active');
+}
+
+function goToSlide(index) {
+  currentIndex = index;
+  updateSlider();
+}
+
+setInterval(() => {
+  currentIndex = (currentIndex + 1) % slides.length;
+  updateSlider();
+}, 5000);
+
+updateSlider();
+</script>
+
+
+
+    <!-- CONNECTIONS SECTION -->
+
+<section class="connections-section" id="connections">
+    <h2 class="customer-flow-heading">“Explore. Experience. Express Interest.”</h2>
+    <p class="subheading">Select Viewing Mode</p>
+    <h3 class="explore-question">How Do You Want to Explore?</h3>
+  
+    <div class="explore-options">
+      <!-- Box 1 - Left -->
+      <div data-aos="fade-left" data-aos-duration="1000" class="explore-row left-align">
+        <div class="explore-card">
+          <img src="assets/View in PC.png" alt="PC" />
+          <p>PC</p>
+        </div>
+        <span class="explore-desc">Best for detailed walkthroughs on big screens.</span>
+      </div>
+  
+      <!-- Box 2 - Right -->
+      <div data-aos="fade-right" data-aos-duration="1000" class="explore-row right-align">
+        <span class="explore-desc">Perfect for quick access on the go.</span>
+        <div class="explore-card">
+          <img src="assets/View in phone.png" alt="Mobile Phone" />
+          <p>Mobile Phone</p>
+        </div>
+      </div>
+  
+      <!-- Box 3 - Left -->
+      <div data-aos="fade-left" data-aos-duration="1000" class="explore-row left-align">
+        <div class="explore-card">
+          <img src="assets/View in VR.jpg" alt="VR" />
+          <p>VR</p>
+        </div>
+        <span class="explore-desc">Immersive experience like you’re *inside* the building.</span>
+      </div>
+    </div>
+  
+  </section>
+
+  <!-- Connections POPUP MODALS -->
+<div class="popup-overlay" id="popup-pc">
+    <div class="popup-content">
+      <span class="close-btn" onclick="closePopup('popup-pc')">&times;</span>
+      <h2>PC Walkthrough</h2>
+      <p>Experience high-resolution, full-screen walkthroughs of our apartments. Perfect for detailed views.</p>
+      <img src="your-pc-image.jpg" alt="PC Walkthrough" />
+    </div>
+  </div>
+  
+  <div class="popup-overlay" id="popup-phone">
+    <div class="popup-content">
+      <span class="close-btn" onclick="closePopup('popup-phone')">&times;</span>
+      <h2>Mobile Walkthrough</h2>
+      <p>Access anytime, anywhere. Optimized for touch gestures.</p>
+      <img src="your-phone-image.jpg" alt="Phone Walkthrough" />
+    </div>
+  </div>
+  
+  <div class="popup-overlay" id="popup-vr">
+    <div class="popup-content">
+      <span class="close-btn" onclick="closePopup('popup-vr')">&times;</span>
+      <h2>VR Walkthrough</h2>
+      <p>Fully immersive, 360° view. Feel like you're actually inside.</p>
+      <img src="your-vr-image.jpg" alt="VR Walkthrough" />
+    </div>
+  </div>
+  
+<!-- For Pricing Section -->
+
+<div class="pricing-section" id="pricing">
+  
+  <!-- Plan Title -->
+<div class="plan-title">
+  <h1>Plans that scale with you</h1>
+  </div>  
+  
+  <div class="toggle">
+    <span>Monthly</span>
+    <input type="checkbox" id="billing-toggle">
+    <label for="billing-toggle"></label>
+    <span>Yearly</span>
+  </div>
+
+  <div class="pricing-container">
+    <div class="plan">
+      <h2>Beginner</h2>
+      <div class="price" id="free-price">Free</div>
+      <ul>
+        <li>One project</li>
+        <li>Limited features</li>
+        <li>Basic analytics</li>
+      </ul>
+      <button>Join</button>
+    </div>
+
+    <div class="plan">
+      <h2>Pro</h2>
+      <div class="price" id="pro-price">₹1,499/mo</div>
+      <ul>
+        <li>5 projects</li>
+        <li>Advanced features</li>
+        <li>Analytics + VR embed</li>
+      </ul>
+      <button>Join</button>
+    </div>
+
+    <div class="plan">
+      <h2>Premium</h2>
+      <div class="price" id="premium-price">₹4,999/mo</div>
+      <ul>
+        <li>Unlimited projects</li>
+        <li>All features include</li>
+        <li>Priority support</li>
+      </ul>
+      <button>Join</button>
+    </div>
+  </div>
+
+  
+
+  <!-- Pricing Button -->
+<div class="pricing-button-container">
+  <button id="showPricing" class="pricing-btn">Compare Plans</button>
+</div>
+
+<!-- Pricing Modal -->
+<div id="pricingModal" class="modal-overlay">
+  <div class="pricing-modal">
+    <span class="close-btn" id="closeModal">&times;</span>
+    <div class="pricing-header">
+      <h2>Compare Plans</h2>
+      <label class="toggle">
+        <input type="checkbox" id="planToggle" />
+        <span class="slider"></span>
+        <span class="toggle-label">Monthly / Yearly</span>
+      </label>
+    </div>
+    <table class="pricing-table">
+      <thead>
+        <tr>
+          <th>Features</th>
+          <th>Free</th>
+          <th>Pro</th>
+          <th>Premium</th>
+        </tr>
+      </thead>
+      <tbody id="pricingBody">
+        <!-- Rows will be injected here -->
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+  <!-- FAQs Section -->
+   
+  <section class="blog-section">
+    <h2 class="section-title">Blog / FAQs</h2>
+    <div class="search-box"> 
+    <input type="text" id="searchInput" placeholder="Search blogs..." />
+  </div>
+    <div class="category-buttons">
+      <button class="category active" data-category="all">All</button>
+      <button class="category" data-category="buyers">For Buyers</button>
+      <button class="category" data-category="builders">For Builders</button>
+      <button class="category" data-category="vr101">VR 101</button>
+    </div>
+
+    <div id="blogGrid" class="blog-grid"></div>
+
+    <button id="showMoreBtn" class="show-more-btn">Show More</button>
+  </section><script src="script.js"></script>
+
+<!-- TESTIMONIALS SECTION -->
+
+<section class="testimonials-section" id="testimonials">
+  <h2 class="testimonial-heading" data-aos="fade-up" data-aos-duration="1000">Testimonials</h2>
+
+  <div class="testimonial-cards-container rtl-scroll" data-aos="fade-up" data-aos-duration="1500">
+    <div class="testimonial-card">
+      <img class="testimonial-photo" src="assets/builder.png" alt="Customer Photo">
+      <div class="testimonial-content">
+        <p class="testimonial-quote">“Aptura made my home search feel like a cinematic journey.”</p>
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p class="testimonial-name">Riya Mehta — Homebuyer</p>
+      </div>
+    </div>
+
+    <div class="testimonial-card">
+      <img class="testimonial-photo" src="assets/builder.png" alt="Builder Photo">
+      <div class="testimonial-content">
+        <p class="testimonial-quote">“Clients love the immersive 3D walkthroughs — my work truly shines.”</p>
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p class="testimonial-name">Arjun Patel — Builder</p>
+      </div>
+    </div>
+
+    <div class="testimonial-card">
+      <img class="testimonial-photo" src="assets/builder.png" alt="Customer Photo">
+      <div class="testimonial-content">
+        <p class="testimonial-quote">“It’s so easy to explore options. Felt in control of every decision.”</p>
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p class="testimonial-name">Simran Joshi — Customer</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="featured-projects">
+    <h3 class="project-heading" data-aos="fade-up" data-aos-duration="1500">Featured Projects</h3>
+    <div class="project-carousel-container">
+      <button class="carousel-nav prev">❮</button>
+      <div class="project-carousel">
+        <div class="project-slide"  data-aos="fade-left" data-aos-duration="1500">
+          <img src="assets/project1.png" alt="Project Image">
+          <div class="project-info">
+            <h4>Skyline Residency</h4>
+            <p>Crafted by UrbanScape Builders — Futuristic, serene, elegant.</p>
+          </div>
+        </div>
+        <div class="project-slide"  data-aos="fade-left" data-aos-duration="2000">
+          <img src="assets/project2.jpg" alt="Project Image">
+          <div class="project-info">
+            <h4>Green Haven</h4>
+            <p>Eco-smart living by Eden Group — Sustainable excellence.</p>
+          </div>
+        </div>
+        <div class="project-slide"  data-aos="fade-left" data-aos-duration="2500">
+          <img src="assets/project2.jpg" alt="Project Image">
+          <div class="project-info">
+            <h4>The Atrium</h4>
+            <p>A collaboration with ArchTech Builders — Stylish urban spaces.</p>
+          </div>
+        </div>
+      </div>
+      <button class="carousel-nav next">❯</button>
+    </div>
+  </div>
+</section>
+
+    <!-- Contact -->
+
+    <section class="contact-section" id="contact">
+      <h2 class="contact-heading" data-aos="fade-up">Get In Touch</h2>
+      <p class="contact-subheading">Let’s make something amazing together.</p>
+    
+      <div class="contact-container">
+        <form class="contact-form" data-aos="fade-up">
+          <input type="text" placeholder="Your Name" required>
+          <input type="email" placeholder="Your Email" required>
+          <textarea placeholder="Your Message" rows="5" required></textarea>
+          <button type="submit">Send Message</button>
+        </form>
+    
+        <div class="map-social-container" data-aos="fade-up">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d917.431896026231!2d72.5911412463154!3d23.107066082070784!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e8352869ba0f9%3A0xe9380b9facbd9cf3!2sGraduate%20school%20of%20engineering%20and%20technology%20(GTU)!5e0!3m2!1sen!2sin!4v1745170821426!5m2!1sen!2sin" 
+              width="100%" 
+              height="450" 
+              style="border:0;" 
+              allowfullscreen="" 
+              loading="lazy" 
+              referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+    
+          <div class="social-links">
+            <div class="linkedin">
+              <a href="https://www.linkedin.com/in/ayush-mittal-741946313?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app " target="_blank"> LinkedIn</a>
+            </div>
+            <div class="instagram">
+              <a href="https://www.instagram.com/mittal_ayush2006" target="_blank"> Instagram</a>
+            </div>
+            <div class="twitter">
+              <a href="https://x.com/Ayushmittal2006" target="_blank"> 𝕏 (Twitter)</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+
+    <footer class="aptura-footer">
+      <div class="footer-content">
+        <div class="footer-left">
+          <img src="assets/APTURA.png" alt="Aptura Logo" class="footer-logo" />
+          <p class="footer-tagline">APTURA is redefining how homes are discovered.</p>
+        </div>
+    
+        <div class="footer-center">
+          <h4>Sitemap</h4>
+          <ul class="footer-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#testimonials">Testimonials</a></li>
+            <li><a href="#faqs">Blog / FAQs</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+    
+        <div class="footer-right">
+          <h4>Stay Updated</h4>
+          <form class="newsletter-form">
+            <input type="email" placeholder="Your email address" required />
+            <button type="submit">Subscribe</button>
+          </form>
+          <div class="footer-socials">
+            <a href="https://linkedin.com" target="_blank">LinkedIn</a>
+            <a href="https://instagram.com" target="_blank">Instagram</a>
+            <a href="https://x.com" target="_blank">𝕏</a>
+          </div>
+        </div>
+      </div>
+    
+      <div class="footer-bottom">
+        <p>&copy; 2025 APTURA. All rights reserved.</p>
+        <div class="footer-legal">
+          <a href="#">Terms</a> | <a href="#">Privacy Policy</a> | <a href="#contact">Contact</a>
+        </div>
+      </div>
+    </footer>
+
+      <!-- JS STARTS HERE-->
+
+<!-- JS for Features -->
+
+
+
+  <!-- JS for Connections Popup-->
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const cards = document.querySelectorAll('.explore-card');
+  
+      cards.forEach((card) => {
+        const mode = card.querySelector('p').innerText.toLowerCase();
+  
+        card.addEventListener('click', () => {
+          if (mode.includes('pc')) {
+            openPopup('popup-pc');
+          } else if (mode.includes('mobile')) {
+            openPopup('popup-phone');
+          } else if (mode.includes('vr')) {
+            openPopup('popup-vr');
+          }
+        });
+      });
+    });
+  
+    function openPopup(id) {
+      document.getElementById(id).style.display = 'flex';
+    }
+  
+    function closePopup(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+  </script>
+
+  <!-- JS for Pricing -->
+
+  <!-- Pricing boxes -->
+<script>
+  const billingToggle = document.getElementById("billing-toggle");
+  const proPrice = document.getElementById("pro-price");
+  const premiumPrice = document.getElementById("premium-price");
+
+  billingToggle.addEventListener("change", () => {
+    if (billingToggle.checked) {
+      proPrice.textContent = "₹14,999/yr";
+      premiumPrice.textContent = "₹49,999/yr";
+    } else {
+      proPrice.textContent = "₹1,499/mo";
+      premiumPrice.textContent = "₹4,999/mo";
+    }
+  });
+</script>
+
+
+<!-- JS For Pricing button -->
+ 
+<script>
+  const pricingModal = document.getElementById("pricingModal");
+  const showBtn = document.getElementById("showPricing");
+  const closeBtn = document.getElementById("closeModal");
+  const toggle = document.getElementById("planToggle");
+  const pricingBody = document.getElementById("pricingBody");
+
+  const pricingData = {
+    monthly: [
+      ["Virtual Apartment Tours",	"2 tours/month", "15 tours/month",	"Unlimited"],
+      ["Basic Walkthrough", "✔️", "✔️", "✔️"],
+      ["VR Compatibility", "❌", "✔️", "✔️"],
+      ["Real-Time VR Casting", "❌", "❌", "✔️"],
+      ["Multiple Layout Previews", "❌", "✔️", "✔️"],
+      ["Ultra-Responsive Experience", "❌", "❌", "✔️"],
+      ["Customization", "❌", "Limited", "Full"],
+      ["Price", "Free", "₹499", "₹999"],
+    ],
+    yearly: [
+      ["Virtual Apartment Tours",	"24 tours/month", "200 tours/month",	"Unlimited"],
+      ["Basic Walkthrough", "✔️", "✔️", "✔️"],
+      ["VR Compatibility", "❌", "✔️", "✔️"],
+      ["Real-Time VR Casting", "❌", "❌", "✔️"],
+      ["Multiple Layout Previews", "❌", "✔️", "✔️"],
+      ["Ultra-Responsive Experience", "❌", "❌", "✔️"],
+      ["Customization", "❌", "Limited", "Full"],
+      ["Price", "Free", "₹4999", "₹9999"],
+    ],
+  };
+
+  function loadPricing(planType) {
+    pricingBody.innerHTML = "";
+    pricingData[planType].forEach(row => {
+      const tr = document.createElement("tr");
+      row.forEach(cell => {
+        const td = document.createElement("td");
+        td.textContent = cell;
+        tr.appendChild(td);
+      });
+      pricingBody.appendChild(tr);
+    });
+  }
+
+  showBtn.addEventListener("click", () => {
+    pricingModal.style.display = "flex";
+    loadPricing("monthly");
+  });
+
+  closeBtn.addEventListener("click", () => {
+    pricingModal.style.display = "none";
+  });
+
+  window.addEventListener("click", (e) => {
+    if (e.target === pricingModal) {
+      pricingModal.style.display = "none";
+    }
+  });
+
+  toggle.addEventListener("change", () => {
+    loadPricing(toggle.checked ? "yearly" : "monthly");
+  });
+</script>
+
+<!-- TESTIMONIALS -->
+
+<script>
+  const carousel = document.querySelector(".project-carousel");
+  const prevBtn = document.querySelector(".carousel-nav.prev");
+  const nextBtn = document.querySelector(".carousel-nav.next");
+  
+  prevBtn.addEventListener("click", () => {
+    carousel.scrollBy({ left: -320, behavior: "smooth" });
+  });
+  
+  nextBtn.addEventListener("click", () => {
+    carousel.scrollBy({ left: 320, behavior: "smooth" });
+  });
+  </script>
+
+
+<!-- For AOS -->
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>
+    AOS.init();
+
+    // Dynamic star ratings
+  document.querySelectorAll('.stars').forEach(star => {
+    const rating = star.getAttribute('data-rating');
+    star.style.setProperty('--rating', rating);
+  });
+  </script>
+
+  <!-- For Scroll to Top Button -->
+
+<button id="scrollToTop" title="Back to top">🚀</button>
+
+<script>
+  const scrollBtn = document.getElementById("scrollToTop");
+
+  window.addEventListener("scroll", () => {
+    if (window.pageYOffset > 300) {
+      scrollBtn.classList.add("show");
+    } else {
+      scrollBtn.classList.remove("show");
+    }
+  });
+
+  scrollBtn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+</script>
+
 </body>
 </html>
