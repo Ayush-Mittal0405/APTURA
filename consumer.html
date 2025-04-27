@@ -1096,6 +1096,7 @@
     <div class="actions">
       <button onclick="window.location.href='analytics.html'" class="analytics-btn" style="background: linear-gradient(135deg, #36d1dc, #5b86e5); color: black; margin-right: 10px;"><i class="fas fa-chart-line"></i> Analytics</button>
       <button onclick="toggleModal('builderModal')">Find My Builder</button>
+      <button onclick="toggleModal('joinModal')" style="background: #36d1dc; color: black; margin-right: 10px;">Join Walkthrough</button>
       <button onclick="toggleModal('profileModal')">Profile</button>
     </div>
   </header>
@@ -1729,6 +1730,16 @@
         <button type="button" class="cancel-btn" onclick="toggleModal('editProfileModal'); toggleModal('profileModal')">Cancel</button>
       </div>
     </form>
+  </div>
+
+  <!-- Join Walkthrough Modal -->
+  <div class="modal" id="joinModal">
+    <h2>Join Walkthrough</h2>
+    <div style="margin: 20px 0;">
+      <input type="text" id="walkthroughCode" placeholder="Enter walkthrough code" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; margin-bottom: 15px;">
+      <button onclick="joinWalkthrough()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #36d1dc, #5b86e5); color: black; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Join</button>
+    </div>
+    <button class="close-modal-btn" onclick="toggleModal('joinModal')">Close</button>
   </div>
 
   <script>
@@ -2429,6 +2440,19 @@
       toggleModal('profileModal');
       toggleModal('editProfileModal');
     };
+
+    function joinWalkthrough() {
+      const code = document.getElementById('walkthroughCode').value;
+      if (!code) {
+        alert('Please enter a walkthrough code');
+        return;
+      }
+      // Here you would typically make an API call to join the walkthrough
+      alert(`Joining walkthrough with code: ${code}`);
+      toggleModal('joinModal');
+      // Clear the input
+      document.getElementById('walkthroughCode').value = '';
+    }
   </script>
 </body>
 </html>

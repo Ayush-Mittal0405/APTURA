@@ -900,6 +900,62 @@
       outline: none;
       border-color: rgba(255, 255, 255, 0.4);
     }
+
+    /* Add these styles to your existing styles */
+    .form-input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #444;
+      background: #2a2a2a;
+      color: white;
+      margin-bottom: 15px;
+    }
+
+    .error-message {
+      color: #ff4444;
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 4px;
+      background: rgba(255, 68, 68, 0.1);
+    }
+
+    .success-message {
+      color: #4CAF50;
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 4px;
+      background: rgba(74, 175, 80, 0.1);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+    }
+
+    .modal.active {
+      display: block;
+    }
+
+    .modal-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #1a1a1a;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      min-width: 400px;
+      max-width: 90%;
+    }
   </style>
 </head>
 <body>
@@ -915,6 +971,7 @@
         <div class="header-right">
           <input type="text" class="search-bar" placeholder="Search projects..."/>
           <button onclick="window.location.href='analytics.html'" class="analytics-btn" style="padding: 0.8rem 1.5rem; background: linear-gradient(135deg, #36d1dc, #5b86e5); color: black; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-right: 10px;"><i class="fas fa-chart-line"></i> Analytics</button>
+          <button onclick="toggleModal('joinModal')" style="padding: 0.8rem 1.5rem; background: #36d1dc; color: black; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-right: 10px;">Join Walkthrough</button>
           <button class="new-project-btn" onclick="openModal()">+ New Project</button>
           <div class="profile-icon" onclick="toggleProfileDropdown()">👤
             <div class="profile-dropdown">
@@ -1206,6 +1263,33 @@
         <button class="cancel-delete" onclick="closeDeleteModal()">Cancel</button>
         <button class="confirm-delete" onclick="confirmDelete()">Delete</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Join Walkthrough Modal -->
+  <div class="modal" id="joinModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Join Walkthrough</div>
+        <button class="close-btn" onclick="closeJoinModal()">&times;</button>
+      </div>
+      <div class="form-group">
+        <label for="walkthroughCode">Walkthrough Code</label>
+        <input type="text" id="walkthroughCode" placeholder="Enter walkthrough code" class="form-input">
+      </div>
+      <div class="form-group">
+        <label for="projectSelect">Select Project to Join</label>
+        <select id="projectSelect" class="form-input">
+          <option value="">Select a project...</option>
+        </select>
+      </div>
+      <div id="walkthroughPreview" style="display: none; margin: 15px 0; padding: 15px; border-radius: 8px; background: rgba(54, 209, 220, 0.1);">
+        <h4 style="margin-bottom: 10px;">Walkthrough Details</h4>
+        <div id="walkthroughDetails"></div>
+      </div>
+      <div id="joinWalkthroughError" class="error-message" style="display: none;"></div>
+      <div id="joinWalkthroughSuccess" class="success-message" style="display: none;"></div>
+      <button onclick="joinWalkthrough()" class="submit-btn" style="margin-top: 15px;">Join Walkthrough</button>
     </div>
   </div>
 
@@ -1772,6 +1856,178 @@
           closeDetailsModal();
         }
       });
+    });
+
+    function toggleModal(modalId) {
+      if (modalId === 'joinModal') {
+        const modal = document.getElementById(modalId);
+        if (!modal.classList.contains('active')) {
+          openJoinModal();
+        } else {
+          closeJoinModal();
+        }
+      }
+    }
+
+    // Populate project select when join modal opens
+    function populateProjectSelect() {
+      const projectSelect = document.getElementById('projectSelect');
+      projectSelect.innerHTML = '<option value="">Select a project...</option>';
+      
+      projects.forEach(project => {
+        const option = document.createElement('option');
+        option.value = project.id;
+        option.textContent = `${project.name} (${project.location})`;
+        projectSelect.appendChild(option);
+      });
+    }
+
+    // Function to open join modal
+    function openJoinModal() {
+      const modal = document.getElementById('joinModal');
+      modal.classList.add('active');
+      populateProjectSelect();
+    }
+
+    // Function to close join modal
+    function closeJoinModal() {
+      const modal = document.getElementById('joinModal');
+      modal.classList.remove('active');
+      resetJoinForm();
+    }
+
+    // Function to reset join form
+    function resetJoinForm() {
+      document.getElementById('walkthroughCode').value = '';
+      document.getElementById('projectSelect').value = '';
+      document.getElementById('walkthroughPreview').style.display = 'none';
+      document.getElementById('joinWalkthroughError').style.display = 'none';
+      document.getElementById('joinWalkthroughSuccess').style.display = 'none';
+    }
+
+    // Function to validate and preview walkthrough
+    async function validateWalkthrough(code) {
+      const previewDiv = document.getElementById('walkthroughPreview');
+      const detailsDiv = document.getElementById('walkthroughDetails');
+      const errorDiv = document.getElementById('joinWalkthroughError');
+
+      try {
+        // Simulate API call to validate walkthrough code
+        const response = await simulateValidateWalkthrough(code);
+        
+        if (response.success) {
+          detailsDiv.innerHTML = `
+            <p><strong>Host:</strong> ${response.data.host}</p>
+            <p><strong>Project:</strong> ${response.data.projectName}</p>
+            <p><strong>Type:</strong> ${response.data.type}</p>
+            <p><strong>Participants:</strong> ${response.data.participants}</p>
+          `;
+          previewDiv.style.display = 'block';
+          errorDiv.style.display = 'none';
+          return true;
+        } else {
+          throw new Error(response.error);
+        }
+      } catch (error) {
+        errorDiv.textContent = error.message;
+        errorDiv.style.display = 'block';
+        previewDiv.style.display = 'none';
+        return false;
+      }
+    }
+
+    // Enhanced joinWalkthrough function
+    async function joinWalkthrough() {
+      const codeInput = document.getElementById('walkthroughCode');
+      const projectSelect = document.getElementById('projectSelect');
+      const errorDiv = document.getElementById('joinWalkthroughError');
+      const successDiv = document.getElementById('joinWalkthroughSuccess');
+      const joinButton = event.target;
+
+      const code = codeInput.value.trim();
+      const selectedProjectId = projectSelect.value;
+      
+      // Reset messages
+      errorDiv.style.display = 'none';
+      successDiv.style.display = 'none';
+
+      // Validate inputs
+      if (!code) {
+        showError('Please enter a walkthrough code');
+        return;
+      }
+
+      if (!selectedProjectId) {
+        showError('Please select a project to join');
+        return;
+      }
+
+      // Code format validation
+      if (!/^[A-Za-z0-9]{6}$/.test(code)) {
+        showError('Invalid code format. Please enter a 6-digit alphanumeric code');
+        return;
+      }
+
+      try {
+        // Show loading state
+        joinButton.textContent = 'Joining...';
+        joinButton.disabled = true;
+
+        // Validate walkthrough
+        const isValid = await validateWalkthrough(code);
+        
+        if (!isValid) {
+          throw new Error('Invalid walkthrough code');
+        }
+
+        // Attempt to join
+        const response = await simulateJoinWalkthrough(code, selectedProjectId);
+
+        if (response.success) {
+          showSuccess('Successfully joined the walkthrough!');
+          
+          // Redirect after delay
+          setTimeout(() => {
+            window.location.href = `/walkthrough/${code}?project=${selectedProjectId}`;
+          }, 1500);
+        } else {
+          throw new Error(response.error || 'Failed to join walkthrough');
+        }
+      } catch (error) {
+        showError(error.message);
+      } finally {
+        joinButton.textContent = 'Join Walkthrough';
+        joinButton.disabled = false;
+      }
+    }
+
+    // Helper function to show error
+    function showError(message) {
+      const errorDiv = document.getElementById('joinWalkthroughError');
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+    }
+
+    // Helper function to show success
+    function showSuccess(message) {
+      const successDiv = document.getElementById('joinWalkthroughSuccess');
+      successDiv.textContent = message;
+      successDiv.style.display = 'block';
+    }
+
+    // Add click outside to close modal
+    window.addEventListener('click', function(event) {
+      const modal = document.getElementById('joinModal');
+      if (event.target === modal) {
+        closeJoinModal();
+      }
+    });
+
+    // Add escape key to close modal
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closeJoinModal();
+      }
     });
   </script>
 </body>
