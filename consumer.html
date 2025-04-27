@@ -9,6 +9,43 @@
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    * {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+
+    /* Ensure all scrollable elements maintain scroll functionality */
+    .modal, body, .profile-section, .builders-grid, .card-grid {
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    }
+
+    /* Ensure modals have proper max height */
+    .modal {
+      max-height: 90vh;
+    }
+
+    /* Hide scrollbar for the main page */
+    body::-webkit-scrollbar {
+      display: none;
+    }
+
+    body {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+
+    /* Ensure modals still have proper overflow behavior */
+    .modal {
+      overflow-y: auto;
+      max-height: 90vh;
+    }
     * {
       box-sizing: border-box;
     }
@@ -2283,17 +2320,37 @@
       };
 
       // Update profile display
-      document.querySelector('.profile-detail-value:contains("Full Name")').textContent = formData.fullName;
-      document.querySelector('.profile-detail-value:contains("Email")').textContent = formData.email;
-      document.querySelector('.profile-detail-value:contains("Phone")').textContent = formData.phone;
-      document.querySelector('.profile-detail-value:contains("Location")').textContent = formData.location;
+      const profileValues = document.querySelectorAll('.profile-detail-value');
+      profileValues.forEach(value => {
+        if (value.previousElementSibling.textContent === 'Full Name') {
+          value.textContent = formData.fullName;
+        } else if (value.previousElementSibling.textContent === 'Email') {
+          value.textContent = formData.email;
+        } else if (value.previousElementSibling.textContent === 'Phone') {
+          value.textContent = formData.phone;
+        } else if (value.previousElementSibling.textContent === 'Location') {
+          value.textContent = formData.location;
+        } else if (value.previousElementSibling.textContent === 'Email Alerts') {
+          value.textContent = formData.emailAlerts ? 'Enabled' : 'Disabled';
+        } else if (value.previousElementSibling.textContent === 'SMS Alerts') {
+          value.textContent = formData.smsAlerts ? 'Enabled' : 'Disabled';
+        } else if (value.previousElementSibling.textContent === 'Price Alerts') {
+          value.textContent = formData.priceAlerts;
+        } else if (value.previousElementSibling.textContent === 'Dark Mode') {
+          value.textContent = formData.darkMode ? 'Enabled' : 'Disabled';
+        } else if (value.previousElementSibling.textContent === 'Language') {
+          value.textContent = document.getElementById('language').options[document.getElementById('language').selectedIndex].text;
+        } else if (value.previousElementSibling.textContent === 'Currency') {
+          value.textContent = document.getElementById('currency').options[document.getElementById('currency').selectedIndex].text;
+        }
+      });
 
       // Close edit modal and show profile
       toggleModal('editProfileModal');
       toggleModal('profileModal');
 
-      // Show success message
-      alert('Profile updated successfully!');
+      // Show success message using notification instead of alert
+      showNotification('Profile updated successfully!');
     }
 
     // Like/Dislike System
