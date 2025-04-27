@@ -867,6 +867,39 @@
       background: #000;
       color: #fff;
     }
+
+    .project-info {
+      display: flex;
+      gap: 1rem;
+      margin: 0.5rem 0;
+      font-size: 0.9rem;
+    }
+
+    .category, .status {
+      padding: 0.3rem 0.8rem;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .card {
+      transition: all 0.5s ease;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.4);
+    }
   </style>
 </head>
 <body>
@@ -967,9 +1000,9 @@
     <div class="modal-content">
       <div class="modal-header">
         <div class="modal-title">Create New Project</div>
-        <button class="close-btn" onclick="closeModal()">&times;</button>
+        <button class="close-btn" onclick="closeModal()" aria-label="Close">&times;</button>
       </div>
-      <form id="newProjectForm">
+      <form id="newProjectForm" onsubmit="handleNewProject(event)">
         <div class="form-group">
           <label for="projectName">Project Name</label>
           <input type="text" id="projectName" required placeholder="Enter project name">
@@ -981,6 +1014,8 @@
             <option value="mumbai">Mumbai</option>
             <option value="delhi">Delhi</option>
             <option value="bangalore">Bangalore</option>
+            <option value="hyderabad">Hyderabad</option>
+            <option value="chennai">Chennai</option>
           </select>
         </div>
         <div class="form-group">
@@ -990,6 +1025,8 @@
             <option value="apartment">Apartment</option>
             <option value="villa">Villa</option>
             <option value="commercial">Commercial</option>
+            <option value="residential">Residential</option>
+            <option value="office">Office Space</option>
           </select>
         </div>
         <div class="form-group">
@@ -999,11 +1036,20 @@
             <option value="ongoing">Ongoing</option>
             <option value="completed">Completed</option>
             <option value="upcoming">Upcoming</option>
+            <option value="planning">Planning</option>
           </select>
         </div>
         <div class="form-group">
-          <label for="projectImage">Project Images</label>
-          <input type="file" id="projectImage" accept="image/*" multiple>
+          <label for="projectDescription">Project Description</label>
+          <textarea id="projectDescription" rows="3" placeholder="Enter project description"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="projectImage">Project Model (Optional)</label>
+          <select id="projectModel" required>
+            <option value="highrisebuild">High Rise Building</option>
+            <option value="house">House</option>
+            <option value="commercial">Commercial Complex</option>
+          </select>
         </div>
         <button type="submit" class="submit-btn">Create Project</button>
       </form>
@@ -1496,49 +1542,97 @@
       card.querySelector('p').textContent = project.location;
     }
 
-    // New Project functionality
-    function createNewProject(formData) {
-      const newProjectId = Math.max(...projects.map(p => p.id)) + 1;
-      
-      // Create new project object
-      const newProject = {
-        id: newProjectId,
-        name: formData.projectName,
-        location: formData.location,
-        category: formData.category,
-        status: formData.status,
-        modelUrl: "https://harshil-maru.github.io/models/assets/model/highrisebuild.glb",
-        rating: 0,
-        reviews: 0
-      };
+    // Model URLs mapping
+    const modelUrls = {
+        highrisebuild: "https://harshil-maru.github.io/models/assets/model/highrisebuild.glb",
+        house: "https://harshil-maru.github.io/models/assets/model/house_1.glb",
+        commercial: "https://harshil-maru.github.io/models/assets/model/british_coffee_house.glb"
+    };
 
-      // Add to data store
-      projects.push(newProject);
+    // Function to handle new project creation
+    function handleNewProject(event) {
+        event.preventDefault();
 
-      // Create and add new card to UI
-      const cardGrid = document.querySelector('.card-grid');
-      const newCard = document.createElement('div');
-      newCard.className = 'card';
-      newCard.setAttribute('data-project-id', newProjectId);
-      newCard.innerHTML = `
-        <model-viewer src="${newProject.modelUrl}"
-                    alt="${newProject.name}"
-                    auto-rotate
-                    camera-controls
-                    style="width: 100%; height: 200px;">
-        </model-viewer>
-        <h3>${newProject.name}</h3>
-        <p>${newProject.location}</p>
-        <div class="card-actions">
-          <button class="card-btn" onclick="openEditModal(${newProjectId})">Edit</button>
-          <button class="card-btn" onclick="openDetailsModal(${newProjectId})">Details</button>
-          <button class="card-btn" onclick="openShareModal(${newProjectId})">Share</button>
-          <button class="card-btn delete" onclick="openDeleteModal(${newProjectId})">Delete</button>
-        </div>
-      `;
-      
-      cardGrid.appendChild(newCard);
-      showNotification('Project created successfully!');
+        // Get form values
+        const name = document.getElementById('projectName').value;
+        const location = document.getElementById('location').value;
+        const category = document.getElementById('category').value;
+        const status = document.getElementById('status').value;
+        const description = document.getElementById('projectDescription').value;
+        const modelType = document.getElementById('projectModel').value;
+
+        // Validate inputs
+        if (!name || !location || !category || !status) {
+            showNotification('Please fill in all required fields', 'error');
+            return;
+        }
+
+        // Create new project object
+        const newProjectId = projects.length > 0 ? Math.max(...projects.map(p => p.id)) + 1 : 1;
+        const newProject = {
+            id: newProjectId,
+            name: name,
+            location: location.charAt(0).toUpperCase() + location.slice(1),
+            category: category,
+            status: status,
+            description: description,
+            modelUrl: modelUrls[modelType],
+            rating: 0,
+            reviews: 0,
+            createdAt: new Date().toISOString()
+        };
+
+        // Add to projects array
+        projects.push(newProject);
+
+        // Create and add new card to UI
+        const cardGrid = document.querySelector('.card-grid');
+        const newCard = createProjectCard(newProject);
+        cardGrid.insertBefore(newCard, cardGrid.firstChild);
+
+        // Close modal and show success message
+        closeModal();
+        showNotification('Project created successfully!');
+
+        // Animate the new card
+        setTimeout(() => {
+            newCard.style.opacity = '1';
+            newCard.style.transform = 'translateY(0)';
+        }, 100);
+    }
+
+    // Function to create project card
+    function createProjectCard(project) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.setAttribute('data-project-id', project.id);
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(-20px)';
+        card.style.transition = 'all 0.5s ease';
+
+        card.innerHTML = `
+            <model-viewer 
+                src="${project.modelUrl}"
+                alt="${project.name}"
+                auto-rotate
+                camera-controls
+                style="width: 100%; height: 200px;">
+            </model-viewer>
+            <h3>${project.name}</h3>
+            <p>${project.location}</p>
+            <div class="project-info">
+                <span class="category">${project.category}</span>
+                <span class="status">${project.status}</span>
+            </div>
+            <div class="card-actions">
+                <button class="card-btn" onclick="openEditModal(${project.id})">Edit</button>
+                <button class="card-btn" onclick="openDetailsModal(${project.id})">Details</button>
+                <button class="card-btn" onclick="openShareModal(${project.id})">Share</button>
+                <button class="card-btn delete" onclick="openDeleteModal(${project.id})">Delete</button>
+            </div>
+        `;
+
+        return card;
     }
 
     // Enhanced notification system
