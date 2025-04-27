@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APTURA - Market Analytics</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        :root {
+            --primary-color: #00BFFF;
+            --bg-dark: #1a1a1a;
+            --bg-card: #2a2a2a;
+            --bg-card-hover: #333333;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Modern Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        .header {
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(0, 191, 255, 0.1);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(45deg, #00BFFF, #0077ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientFlow 3s ease infinite;
+        }
+
+        .home-button {
+            background: linear-gradient(45deg, #00BFFF, #0077ff);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .home-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 191, 255, 0.3);
+        }
+
+        .analytics-nav {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 1rem;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 64px;
+            z-index: 99;
+            scrollbar-width: none;
+        }
+
+        .analytics-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-item {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--bg-card);
+            border-radius: 25px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-item:hover {
+            background-color: var(--bg-card-hover);
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(45deg, #00BFFF, #0077ff);
+            border-color: transparent;
+            box-shadow: 0 5px 15px rgba(0, 191, 255, 0.3);
+        }
+
+        .analytics-section {
+            padding: 2rem;
+            margin: 1rem;
+            background-color: var(--bg-card);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .analytics-section:hover {
+            transform: translateY(-5px);
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: linear-gradient(145deg, #2a2a2a, #333333);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: 0.5s;
+        }
+
+        .metric-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 191, 255, 0.2);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+            background: linear-gradient(45deg, #00BFFF, #0077ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .trend-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .trend-up {
+            color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .trend-down {
+            color: #ff4444;
+            background: rgba(255, 0, 0, 0.1);
+        }
+
+        .chart-container {
+            background-color: rgba(51, 51, 51, 0.5);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-top: 1.5rem;
+            height: 300px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .chart-container:hover {
+            transform: scale(1.01);
+            box-shadow: 0 8px 25px rgba(0, 191, 255, 0.2);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 1.5rem;
+            background: rgba(51, 51, 51, 0.5);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .data-table th {
+            background-color: rgba(0, 191, 255, 0.1);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .data-table tr {
+            transition: all 0.3s ease;
+        }
+
+        .data-table tr:hover {
+            background-color: rgba(0, 191, 255, 0.1);
+            transform: scale(1.01);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes gradientFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Loading Animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid transparent;
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 0.8rem;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+                width: 100%;
+                text-align: center;
+            }
+
+            .home-button {
+                margin-left: auto;
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+
+            .analytics-nav {
+                padding: 0.5rem;
+                gap: 0.5rem;
+                top: 105px; /* Adjusted for wrapped header */
+            }
+
+            .nav-item {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .nav-item i {
+                margin-right: 4px;
+            }
+
+            .analytics-section {
+                padding: 1rem;
+                margin: 0.5rem;
+                border-radius: 15px;
+            }
+
+            .section-title {
+                font-size: 1.3rem;
+                flex-wrap: wrap;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .metric-card {
+                padding: 1.2rem;
+            }
+
+            .metric-value {
+                font-size: 1.8rem;
+            }
+
+            .metric-label {
+                font-size: 0.9rem;
+            }
+
+            .trend-indicator {
+                font-size: 0.8rem;
+                padding: 0.3rem 0.6rem;
+            }
+
+            .chart-container {
+                height: 250px;
+                padding: 1rem;
+                margin-top: 1rem;
+            }
+
+            .data-table {
+                font-size: 0.9rem;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 0.8rem;
+            }
+
+            /* Add horizontal scroll indicators */
+            .table-scroll-container {
+                position: relative;
+                margin: 1rem -1rem;
+                padding: 0 1rem;
+            }
+
+            .table-scroll-container::before,
+            .table-scroll-container::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: 20px;
+                pointer-events: none;
+                z-index: 1;
+            }
+
+            .table-scroll-container::before {
+                left: 0;
+                background: linear-gradient(to right, rgba(42, 42, 42, 1), transparent);
+            }
+
+            .table-scroll-container::after {
+                right: 0;
+                background: linear-gradient(to left, rgba(42, 42, 42, 1), transparent);
+            }
+
+            /* Touch-friendly scrolling for nav */
+            .analytics-nav {
+                -webkit-overflow-scrolling: touch;
+                scroll-snap-type: x mandatory;
+                scroll-padding: 0 1rem;
+            }
+
+            .nav-item {
+                scroll-snap-align: start;
+            }
+
+            /* Improved touch targets */
+            .metric-card {
+                min-height: 150px;
+                touch-action: pan-y;
+            }
+
+            /* Mobile-optimized loading spinner */
+            .loading-spinner {
+                width: 40px;
+                height: 40px;
+                border-width: 2px;
+            }
+
+            /* Mobile-friendly animations */
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* Optimize chart tooltips for mobile */
+            .chart-container {
+                touch-action: pan-x pan-y;
+            }
+        }
+
+        /* Small phones */
+        @media (max-width: 380px) {
+            .header h1 {
+                font-size: 1.2rem;
+            }
+
+            .nav-item {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            .section-title {
+                font-size: 1.2rem;
+            }
+
+            .metric-value {
+                font-size: 1.6rem;
+            }
+
+            .metric-card {
+                min-height: 130px;
+            }
+        }
+
+        /* Landscape mode */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .header {
+                padding: 0.5rem;
+            }
+
+            .analytics-nav {
+                top: 60px;
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .chart-container {
+                height: 200px;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .trend-up {
+                color: #4caf50;
+            }
+
+            .trend-down {
+                color: #f44336;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <div class="header">
+        <h1><i class="fas fa-chart-line"></i> Market Analytics</h1>
+        <button class="home-button" onclick="window.location.href='index.html'">
+            <i class="fas fa-home"></i> Home
+        </button>
+    </div>
+
+    <div class="analytics-nav">
+        <div class="nav-item active"><i class="fas fa-chart-line"></i> Market Trends</div>
+        <div class="nav-item"><i class="fas fa-tags"></i> Price Analysis</div>
+        <div class="nav-item"><i class="fas fa-arrow-trend-up"></i> Property Appreciation</div>
+        <div class="nav-item"><i class="fas fa-coins"></i> Investment ROI</div>
+        <div class="nav-item"><i class="fas fa-heart-pulse"></i> Market Health</div>
+        <div class="nav-item"><i class="fas fa-building"></i> Competition</div>
+        <div class="nav-item"><i class="fas fa-users"></i> Demographics</div>
+        <div class="nav-item"><i class="fas fa-clock"></i> Real-Time Data</div>
+    </div>
+
+    <!-- Market Demand & Supply Trends -->
+    <div class="analytics-section">
+        <h2 class="section-title"><i class="fas fa-chart-line"></i> Market Demand & Supply Trends</h2>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value">2,345</div>
+                <div class="metric-label">Active Property Listings</div>
+                <div class="trend-indicator trend-up">↑ 15% from last month</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">78%</div>
+                <div class="metric-label">Demand Satisfaction Rate</div>
+                <div class="trend-indicator trend-up">↑ 5% from last month</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">456</div>
+                <div class="metric-label">New Properties This Month</div>
+                <div class="trend-indicator trend-down">↓ 3% from last month</div>
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="demandSupplyChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Price Trends -->
+    <div class="analytics-section">
+        <h2 class="section-title"><i class="fas fa-tags"></i> Price Trends & Predictions</h2>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value">₹5,500</div>
+                <div class="metric-label">Avg. Price/sqft</div>
+                <div class="trend-indicator trend-up">↑ 8% from last quarter</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">₹6,200</div>
+                <div class="metric-label">Predicted Price/sqft (Next Quarter)</div>
+                <div class="trend-indicator trend-up">↑ 12% growth expected</div>
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="priceTrendChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Property Appreciation -->
+    <div class="analytics-section">
+        <h2 class="section-title"><i class="fas fa-arrow-trend-up"></i> Property Appreciation Potential</h2>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value">12.5%</div>
+                <div class="metric-label">Annual Appreciation Rate</div>
+                <div class="trend-indicator trend-up">↑ Strong Growth</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">15+</div>
+                <div class="metric-label">High-Growth Areas</div>
+            </div>
+        </div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Location</th>
+                    <th>Current Value</th>
+                    <th>Projected Growth (1yr)</th>
+                    <th>Growth Factors</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Satellite</td>
+                    <td>₹6,500/sqft</td>
+                    <td>15%</td>
+                    <td>Metro Extension, IT Park</td>
+                </tr>
+                <tr>
+                    <td>Bopal</td>
+                    <td>₹4,800/sqft</td>
+                    <td>12%</td>
+                    <td>Ring Road, New Township</td>
+                </tr>
+                <tr>
+                    <td>SG Highway</td>
+                    <td>₹5,200/sqft</td>
+                    <td>10%</td>
+                    <td>Commercial Development</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Investment ROI -->
+    <div class="analytics-section">
+        <h2 class="section-title"><i class="fas fa-coins"></i> Investment ROI Analysis</h2>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value">8.2%</div>
+                <div class="metric-label">Average Rental Yield</div>
+                <div class="trend-indicator trend-up">↑ 0.5% from last quarter</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">15.5%</div>
+                <div class="metric-label">3-Year ROI Projection</div>
+                <div class="trend-indicator trend-up">↑ Strong Returns</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">₹25,000</div>
+                <div class="metric-label">Avg. Monthly Rental Income</div>
+                <div class="trend-indicator trend-up">↑ 3% increase</div>
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="roiChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Market Health -->
+    <div class="analytics-section">
+        <h2 class="section-title"><i class="fas fa-heart-pulse"></i> Local Market Health Indicators</h2>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value">45 days</div>
+                <div class="metric-label">Average Days on Market</div>
+                <div class="trend-indicator trend-down">↓ Faster Sales</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">1:1.5</div>
+                <div class="metric-label">Buyer to Seller Ratio</div>
+                <div class="trend-indicator trend-up">↑ High Demand</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">92%</div>
+                <div class="metric-label">Price to Value Ratio</div>
+                <div class="trend-indicator trend-up">↑ Strong Market</div>
+            </div>
+        </div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Health Indicator</th>
+                    <th>Current Value</th>
+                    <th>Status</th>
+                    <th>Trend</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Market Liquidity</td>
+                    <td>High</td>
+                    <td>Healthy</td>
+                    <td class="trend-up">↑ Improving</td>
+                </tr>
+                <tr>
+                    <td>Price Stability</td>
+                    <td>Moderate</td>
+                    <td>Stable</td>
+                    <td class="trend-up">↑ Steady</td>
+                </tr>
+                <tr>
+                    <td>Investment Flow</td>
+                    <td>Strong</td>
+                    <td>Very Healthy</td>
+                    <td class="trend-up">↑ Increasing</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Competition Analysis -->
+    <div class="analytics-section">
+        <h2 class="section-title"><i class="fas fa-building"></i> Competitive Analysis</h2>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value">125</div>
+                <div class="metric-label">Active Competitors</div>
+                <div class="trend-indicator">Moderate Competition</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">15%</div>
+                <div class="metric-label">Market Share</div>
+                <div class="trend-indicator trend-up">↑ 2% gain</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">4.8/5</div>
+                <div class="metric-label">Customer Rating</div>
+                <div class="trend-indicator trend-up">↑ Above Average</div>
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="competitionChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Demographics -->
+    <div class="analytics-section">
+        <h2 class="section-title"><i class="fas fa-users"></i> Buyer & Investor Demographics</h2>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value">32</div>
+                <div class="metric-label">Median Buyer Age</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">₹15L</div>
+                <div class="metric-label">Avg. Annual Income</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">65%</div>
+                <div class="metric-label">First-Time Buyers</div>
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="demographicsChart"></canvas>
+        </div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Demographic Group</th>
+                    <th>Preferred Property Type</th>
+                    <th>Avg. Budget</th>
+                    <th>Key Requirements</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Young Professionals</td>
+                    <td>1-2 BHK Apartments</td>
+                    <td>₹45-60L</td>
+                    <td>Modern Amenities, Near IT Hubs</td>
+                </tr>
+                <tr>
+                    <td>Families</td>
+                    <td>3-4 BHK Apartments</td>
+                    <td>₹80L-1.2Cr</td>
+                    <td>Schools, Parks, Security</td>
+                </tr>
+                <tr>
+                    <td>Investors</td>
+                    <td>Premium Properties</td>
+                    <td>₹1.5Cr+</td>
+                    <td>High ROI, Growth Areas</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Real-Time Data -->
+    <div class="analytics-section">
+        <h2 class="section-title"><i class="fas fa-clock"></i> Real-Time Market Data</h2>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value">24</div>
+                <div class="metric-label">New Listings Today</div>
+                <div class="trend-indicator trend-up">↑ Active Market</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">12</div>
+                <div class="metric-label">Properties Sold Today</div>
+                <div class="trend-indicator trend-up">↑ High Velocity</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">156</div>
+                <div class="metric-label">Active Viewings</div>
+                <div class="trend-indicator trend-up">↑ High Interest</div>
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="realTimeChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Wait for DOM content to be loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if Chart.js is loaded
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js not loaded');
+                return;
+            }
+
+            // Function to initialize charts
+            function initializeCharts() {
+                try {
+                    // Demand & Supply Chart
+                    const demandSupplyCtx = document.getElementById('demandSupplyChart');
+                    if (!demandSupplyCtx) {
+                        console.error('demandSupplyChart canvas not found');
+                        return;
+                    }
+
+                    new Chart(demandSupplyCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                            datasets: [{
+                                label: 'Demand',
+                                data: [1200, 1350, 1450, 1600, 1750, 2000],
+                                borderColor: '#00BFFF',
+                                backgroundColor: 'rgba(0, 191, 255, 0.1)',
+                                fill: true,
+                                tension: 0.4
+                            }, {
+                                label: 'Supply',
+                                data: [1000, 1100, 1300, 1450, 1600, 1800],
+                                borderColor: '#FF4444',
+                                backgroundColor: 'rgba(255, 68, 68, 0.1)',
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            interaction: {
+                                intersect: false,
+                                mode: 'index'
+                            },
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'top',
+                                    labels: {
+                                        color: '#fff',
+                                        font: {
+                                            size: window.innerWidth < 768 ? 10 : 12
+                                        }
+                                    }
+                                },
+                                tooltip: {
+                                    enabled: true,
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    titleColor: '#fff',
+                                    bodyColor: '#fff',
+                                    borderColor: '#333',
+                                    borderWidth: 1,
+                                    padding: 10
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: {
+                                        color: 'rgba(255, 255, 255, 0.1)',
+                                        drawBorder: false
+                                    },
+                                    ticks: {
+                                        color: '#fff',
+                                        font: {
+                                            size: window.innerWidth < 768 ? 10 : 12
+                                        }
+                                    }
+                                },
+                                x: {
+                                    grid: {
+                                        color: 'rgba(255, 255, 255, 0.1)',
+                                        drawBorder: false
+                                    },
+                                    ticks: {
+                                        color: '#fff',
+                                        font: {
+                                            size: window.innerWidth < 768 ? 10 : 12
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // Price Trends Chart
+                    const priceTrendCtx = document.getElementById('priceTrendChart').getContext('2d');
+                    new Chart(priceTrendCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['2023 Q1', 'Q2', 'Q3', 'Q4', '2024 Q1', 'Q2 (Predicted)'],
+                            datasets: [{
+                                label: 'Price per sqft (₹)',
+                                data: [4800, 5000, 5200, 5350, 5500, 6200],
+                                borderColor: '#4CAF50',
+                                backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'top',
+                                    labels: {
+                                        color: '#fff',
+                                        font: {
+                                            size: window.innerWidth < 768 ? 10 : 12
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: false,
+                                    grid: {
+                                        color: 'rgba(255, 255, 255, 0.1)',
+                                        drawBorder: false
+                                    },
+                                    ticks: {
+                                        color: '#fff',
+                                        callback: function(value) {
+                                            return '₹' + value;
+                                        },
+                                        font: {
+                                            size: window.innerWidth < 768 ? 10 : 12
+                                        }
+                                    }
+                                },
+                                x: {
+                                    grid: {
+                                        color: 'rgba(255, 255, 255, 0.1)',
+                                        drawBorder: false
+                                    },
+                                    ticks: {
+                                        color: '#fff',
+                                        font: {
+                                            size: window.innerWidth < 768 ? 10 : 12
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // ROI Chart
+                    const roiCtx = document.getElementById('roiChart').getContext('2d');
+                    new Chart(roiCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['1 Year', '2 Years', '3 Years', '4 Years', '5 Years'],
+                            datasets: [{
+                                label: 'Expected ROI %',
+                                data: [8, 12, 15.5, 18.2, 22],
+                                backgroundColor: 'rgba(0, 191, 255, 0.6)',
+                                borderColor: '#00BFFF',
+                                borderWidth: 1,
+                                borderRadius: 5
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'top',
+                                    labels: {
+                                        color: '#fff',
+                                        font: {
+                                            size: window.innerWidth < 768 ? 10 : 12
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: {
+                                        color: 'rgba(255, 255, 255, 0.1)',
+                                        drawBorder: false
+                                    },
+                                    ticks: {
+                                        color: '#fff',
+                                        callback: function(value) {
+                                            return value + '%';
+                                        },
+                                        font: {
+                                            size: window.innerWidth < 768 ? 10 : 12
+                                        }
+                                    }
+                                },
+                                x: {
+                                    grid: {
+                                        color: 'rgba(255, 255, 255, 0.1)',
+                                        drawBorder: false
+                                    },
+                                    ticks: {
+                                        color: '#fff',
+                                        font: {
+                                            size: window.innerWidth < 768 ? 10 : 12
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // Demographics Chart
+                    const demographicsCtx = document.getElementById('demographicsChart').getContext('2d');
+                    new Chart(demographicsCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['25-35', '35-45', '45-55', '55+'],
+                            datasets: [{
+                                label: 'Age Distribution (%)',
+                                data: [45, 30, 15, 10],
+                                backgroundColor: [
+                                    'rgba(0, 191, 255, 0.6)',
+                                    'rgba(76, 175, 80, 0.6)',
+                                    'rgba(255, 193, 7, 0.6)',
+                                    'rgba(156, 39, 176, 0.6)'
+                                ],
+                                borderColor: [
+                                    '#00BFFF',
+                                    '#4CAF50',
+                                    '#FFC107',
+                                    '#9C27B0'
+                                ],
+                                borderWidth: 1,
+                                borderRadius: 5
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'top',
+                                    labels: {
+                                        color: '#fff',
+                                        font: {
+                                            size: window.innerWidth < 768 ? 10 : 12
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: {
+                                        color: 'rgba(255, 255, 255, 0.1)',
+                                        drawBorder: false
+                                    },
+                                    ticks: {
+                                        color: '#fff',
+                                        callback: function(value) {
+                                            return value + '%';
+                                        },
+                                        font: {
+                                            size: window.innerWidth < 768 ? 10 : 12
+                                        }
+                                    }
+                                },
+                                x: {
+                                    grid: {
+                                        color: 'rgba(255, 255, 255, 0.1)',
+                                        drawBorder: false
+                                    },
+                                    ticks: {
+                                        color: '#fff',
+                                        font: {
+                                            size: window.innerWidth < 768 ? 10 : 12
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // Competition Chart (Doughnut)
+                    const competitionCtx = document.getElementById('competitionChart').getContext('2d');
+                    new Chart(competitionCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['APTURA', 'Competitor A', 'Competitor B', 'Others'],
+                            datasets: [{
+                                data: [15, 12, 10, 63],
+                                backgroundColor: [
+                                    'rgba(0, 191, 255, 0.8)',
+                                    'rgba(255, 68, 68, 0.8)',
+                                    'rgba(76, 175, 80, 0.8)',
+                                    'rgba(158, 158, 158, 0.8)'
+                                ],
+                                borderColor: [
+                                    '#00BFFF',
+                                    '#FF4444',
+                                    '#4CAF50',
+                                    '#9E9E9E'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'top',
+                                    labels: {
+                                        color: '#fff',
+                                        font: {
+                                            size: window.innerWidth < 768 ? 10 : 12
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // Real-Time Chart
+                    const realTimeCtx = document.getElementById('realTimeChart').getContext('2d');
+                    new Chart(realTimeCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['9 AM', '10 AM', '11 AM', '12 PM', '1 PM', '2 PM', '3 PM'],
+                            datasets: [{
+                                label: 'Active Users',
+                                data: [45, 59, 80, 81, 56, 55, 70],
+                                borderColor: '#00BFFF',
+                                backgroundColor: 'rgba(0, 191, 255, 0.1)',
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'top',
+                                    labels: {
+                                        color: '#fff',
+                                        font: {
+                                            size: window.innerWidth < 768 ? 10 : 12
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: {
+                                        color: 'rgba(255, 255, 255, 0.1)',
+                                        drawBorder: false
+                                    },
+                                    ticks: {
+                                        color: '#fff',
+                                        font: {
+                                            size: window.innerWidth < 768 ? 10 : 12
+                                        }
+                                    }
+                                },
+                                x: {
+                                    grid: {
+                                        color: 'rgba(255, 255, 255, 0.1)',
+                                        drawBorder: false
+                                    },
+                                    ticks: {
+                                        color: '#fff',
+                                        font: {
+                                            size: window.innerWidth < 768 ? 10 : 12
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                } catch (error) {
+                    console.error('Error initializing charts:', error);
+                }
+            }
+
+            // Try to initialize charts after a short delay to ensure Chart.js is loaded
+            setTimeout(initializeCharts, 500);
+
+            // Remove loading overlay after attempting to initialize charts
+            setTimeout(() => {
+                const loadingOverlay = document.querySelector('.loading-overlay');
+                if (loadingOverlay) {
+                    loadingOverlay.style.display = 'none';
+                }
+            }, 1000);
+        });
+
+        // Smooth scroll to section when clicking nav items
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                item.classList.add('active');
+                
+                // Find corresponding section and scroll to it
+                const sectionTitle = item.textContent.trim();
+                const section = Array.from(document.querySelectorAll('.section-title')).find(title => 
+                    title.textContent.includes(sectionTitle.replace(/^[^ ]+ /, '')));
+                if (section) {
+                    section.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Add intersection observer for section animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.analytics-section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            observer.observe(section);
+        });
+
+        // Add touch support for charts
+        Chart.defaults.plugins.tooltip.enabled = true;
+        Chart.defaults.plugins.tooltip.intersect = false;
+        Chart.defaults.plugins.tooltip.mode = 'nearest';
+
+        // Add mobile-specific chart options
+        const mobileChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: '#333' },
+                    ticks: { 
+                        color: '#fff',
+                        maxTicksLimit: 5, // Limit number of ticks on mobile
+                        font: {
+                            size: window.innerWidth < 768 ? 10 : 12
+                        }
+                    }
+                },
+                x: {
+                    grid: { color: '#333' },
+                    ticks: { 
+                        color: '#fff',
+                        maxTicksLimit: 6, // Limit number of ticks on mobile
+                        font: {
+                            size: window.innerWidth < 768 ? 10 : 12
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: { 
+                        color: '#fff',
+                        font: {
+                            size: window.innerWidth < 768 ? 10 : 12
+                        }
+                    }
+                },
+                tooltip: {
+                    titleFont: {
+                        size: window.innerWidth < 768 ? 12 : 14
+                    },
+                    bodyFont: {
+                        size: window.innerWidth < 768 ? 11 : 13
+                    },
+                    padding: window.innerWidth < 768 ? 8 : 12
+                }
+            }
+        };
+
+        // Add touch event handlers for better mobile interaction
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle table scrolling
+            const tables = document.querySelectorAll('.data-table');
+            tables.forEach(table => {
+                let scrolling = false;
+                let startX;
+                let scrollLeft;
+
+                table.addEventListener('touchstart', (e) => {
+                    scrolling = true;
+                    startX = e.touches[0].pageX - table.offsetLeft;
+                    scrollLeft = table.scrollLeft;
+                });
+
+                table.addEventListener('touchmove', (e) => {
+                    if(!scrolling) return;
+                    e.preventDefault();
+                    const x = e.touches[0].pageX - table.offsetLeft;
+                    const walk = (x - startX) * 2;
+                    table.scrollLeft = scrollLeft - walk;
+                });
+
+                table.addEventListener('touchend', () => {
+                    scrolling = false;
+                });
+            });
+
+            // Handle nav scrolling
+            const nav = document.querySelector('.analytics-nav');
+            let isScrolling;
+            nav.addEventListener('scroll', () => {
+                window.clearTimeout(isScrolling);
+                isScrolling = setTimeout(() => {
+                    const items = nav.querySelectorAll('.nav-item');
+                    const center = nav.offsetWidth / 2;
+                    let closest = null;
+                    let closestDistance = Infinity;
+
+                    items.forEach(item => {
+                        const box = item.getBoundingClientRect();
+                        const offset = box.x + (box.width / 2);
+                        const distance = Math.abs(offset - center);
+
+                        if (distance < closestDistance) {
+                            closestDistance = distance;
+                            closest = item;
+                        }
+                    });
+
+                    if (closest) {
+                        closest.scrollIntoView({
+                            behavior: 'smooth',
+                            inline: 'center'
+                        });
+                    }
+                }, 150);
+            });
+        });
+
+        // Update chart options for mobile
+        window.onload = function() {
+            const charts = document.querySelectorAll('canvas');
+            charts.forEach(chart => {
+                const ctx = chart.getContext('2d');
+                const existingChart = Chart.getChart(ctx);
+                if (existingChart) {
+                    existingChart.options = {
+                        ...existingChart.options,
+                        ...mobileChartOptions
+                    };
+                    existingChart.update();
+                }
+            });
+        };
+    </script>
+</body>
+</html> 
