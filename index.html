@@ -199,16 +199,12 @@
 
    
 
-   <!-- Feature Slider Section (Updated with Controls & Autoplay) -->
-
-  <!-- Feature Slider Section -->
-<!-- HTML: Feature Slider Section -->
+   <!-- Feature Slider Section -->
 <section class="feature-slider-section" id="features">
   <h2 data-aos="fade-up" data-aos-duration="1500" class="section-heading">Features That Redefine Virtual Touring</h2>
 
   <div data-aos="fade-up" data-aos-duration="1500" class="slider-container">
     <div class="slider" id="featureSlider">
-
       <div class="slide">
         <div class="image-placeholder"></div>
         <div class="slide-content">
@@ -280,20 +276,17 @@
           </ul>
         </div>
       </div>
-
     </div>
   </div>
-    <div data-aos="fade-up" data-aos-duration="1500" class="slider-nav" id="sliderNav"></div>
-  
 </section>
 
-<!-- CSS: Feature Slider Styles -->
 <style>
 .feature-slider-section {
   background-color: #000;
   padding: 100px 20px;
   color: #00BFFF;
   text-align: center;
+  overflow: hidden;
 }
 
 .section-heading {
@@ -302,29 +295,28 @@
 }
 
 .slider-container {
-  max-width: 100%;
-  height: 360px;
+  max-width: 1400px;
+  height: 500px;
   margin: 0 auto;
   overflow: hidden;
   border-radius: 12px;
-  background-color: #111;
-  padding: 20px;
+  background-color: rgba(17, 17, 17, 0.8);
+  padding: 30px;
+  position: relative;
 }
 
 .slider {
   display: flex;
-  width: calc(100% * 6);
-  height: 200px;
-  transition: transform 0.5s ease-in-out;
-  
+  transition: transform 0.8s ease-in-out;
+  height: 100%;
+  position: relative;
 }
 
 .slide {
-  flex: 0 0 100%;
-  max-width: 100%;
-  height: 350px;
+  min-width: 100%;
+  height: 100%;
   box-sizing: border-box;
-  background-color: #1c1c1c;
+  background-color: transparent;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -332,6 +324,18 @@
   justify-content: flex-start;
   text-align: center;
   padding: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
+}
+
+.slide.active {
+  opacity: 1;
+  visibility: visible;
+  position: relative;
 }
 
 .image-placeholder {
@@ -339,53 +343,191 @@
   height: 200px;
   background-color: #2a2a2a;
   border-radius: 10px 10px 0 0;
+  margin-bottom: 20px;
 }
 
 .slide-content {
-  padding: 30px 20px;
+  padding: 20px 60px;
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  height: calc(100% - 220px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: transparent;
 }
 
 .slide h3 {
-  font-size: 1.5rem;
+  font-size: 2rem;
   color: #00BFFF;
-  margin-bottom: 10px;
+  margin-bottom: 25px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-align: center;
+  width: 100%;
 }
 
 .slide p {
-  font-size: 1rem;
+  font-size: 1.2rem;
   color: #eee;
-  margin-bottom: 10px;
+  margin-bottom: 25px;
+  line-height: 1.6;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .slide ul {
-  list-style: disc;
+  list-style: none;
   color: #ccc;
-  font-size: 0.95rem;
+  font-size: 1.1rem;
   text-align: left;
-  padding-left: 20px;
-  max-width: 600px;
+  padding: 0 20px;
   margin: 0 auto;
+  width: 100%;
+  max-width: 800px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.slide ul li {
+  margin-bottom: 15px;
+  padding-left: 30px;
+  position: relative;
+  line-height: 1.5;
+}
+
+.slide ul li:before {
+  content: "•";
+  color: #00BFFF;
+  font-size: 1.5em;
+  position: absolute;
+  left: 0;
+  top: -4px;
 }
 
 .slider-nav {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
-  gap: 8px;
+  margin-top: 30px;
+  gap: 15px;
+  position: relative;
+  z-index: 3;
 }
 
 .slider-nav button {
-  width: 10px;
-  height: 10px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  border: none;
-  background-color: #444;
+  border: 2px solid #00BFFF;
+  background-color: transparent;
   cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
 }
 
 .slider-nav button.active {
   background-color: #00BFFF;
+  transform: scale(1.2);
+}
+
+.slider-nav button:hover {
+  transform: scale(1.2);
+}
+
+.slider-arrows {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 2;
+  max-width: 1460px;
+  margin: 0 auto;
+  pointer-events: none;
+}
+
+.slider-arrow {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgba(0, 191, 255, 0.2);
+  border: 2px solid rgba(0, 191, 255, 0.3);
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 -10px;
+}
+
+.slider-arrow:hover {
+  background-color: rgba(0, 191, 255, 0.4);
+  border-color: rgba(0, 191, 255, 0.5);
+}
+
+@media (max-width: 1200px) {
+  .slider-container {
+    max-width: 100%;
+  }
+
+  .slide-content {
+    padding: 20px 40px;
+  }
+
+  .slide ul {
+    grid-template-columns: 1fr;
+    padding: 0;
+  }
+
+  .slide h3 {
+    font-size: 1.8rem;
+    white-space: normal;
+  }
+}
+
+@media (max-width: 768px) {
+  .slider-container {
+    height: 600px;
+    padding: 20px;
+  }
+  
+  .slide h3 {
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+  }
+  
+  .slide p {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+  }
+  
+  .slide ul {
+    font-size: 1rem;
+  }
+  
+  .slide-content {
+    padding: 15px 20px;
+  }
+  
+  .slider-arrows {
+    padding: 0 10px;
+  }
+  
+  .slider-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    margin: 0;
+  }
 }
 </style>
 
@@ -428,7 +570,7 @@ updateSlider();
     <!-- CONNECTIONS SECTION -->
 
 <section class="connections-section" id="connections">
-    <h2 class="customer-flow-heading">“Explore. Experience. Express Interest.”</h2>
+    <h2 class="customer-flow-heading">"Explore. Experience. Express Interest."</h2>
     <p class="subheading">Select Viewing Mode</p>
     <h3 class="explore-question">How Do You Want to Explore?</h3>
   
@@ -457,7 +599,7 @@ updateSlider();
           <img src="assets/View in VR.jpg" alt="VR" />
           <p>VR</p>
         </div>
-        <span class="explore-desc">Immersive experience like you’re *inside* the building.</span>
+        <span class="explore-desc">Immersive experience like you're *inside* the building.</span>
       </div>
     </div>
   
@@ -606,7 +748,7 @@ updateSlider();
     <div class="testimonial-card">
       <img class="testimonial-photo" src="assets/builder.png" alt="Customer Photo">
       <div class="testimonial-content">
-        <p class="testimonial-quote">“Aptura made my home search feel like a cinematic journey.”</p>
+        <p class="testimonial-quote">"Aptura made my home search feel like a cinematic journey."</p>
         <div class="stars">⭐⭐⭐⭐⭐</div>
         <p class="testimonial-name">Riya Mehta — Homebuyer</p>
       </div>
@@ -615,7 +757,7 @@ updateSlider();
     <div class="testimonial-card">
       <img class="testimonial-photo" src="assets/builder.png" alt="Builder Photo">
       <div class="testimonial-content">
-        <p class="testimonial-quote">“Clients love the immersive 3D walkthroughs — my work truly shines.”</p>
+        <p class="testimonial-quote">"Clients love the immersive 3D walkthroughs — my work truly shines."</p>
         <div class="stars">⭐⭐⭐⭐⭐</div>
         <p class="testimonial-name">Arjun Patel — Builder</p>
       </div>
@@ -624,7 +766,7 @@ updateSlider();
     <div class="testimonial-card">
       <img class="testimonial-photo" src="assets/builder.png" alt="Customer Photo">
       <div class="testimonial-content">
-        <p class="testimonial-quote">“It’s so easy to explore options. Felt in control of every decision.”</p>
+        <p class="testimonial-quote">"It's so easy to explore options. Felt in control of every decision."</p>
         <div class="stars">⭐⭐⭐⭐⭐</div>
         <p class="testimonial-name">Simran Joshi — Customer</p>
       </div>
@@ -667,7 +809,7 @@ updateSlider();
 
     <section class="contact-section" id="contact">
       <h2 class="contact-heading" data-aos="fade-up">Get In Touch</h2>
-      <p class="contact-subheading">Let’s make something amazing together.</p>
+      <p class="contact-subheading">Let's make something amazing together.</p>
     
       <div class="contact-container">
         <form class="contact-form" data-aos="fade-up">
